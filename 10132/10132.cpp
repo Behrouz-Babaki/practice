@@ -63,7 +63,7 @@ bool checkNode (const vector<vector<bool> >& fragments, const vector<vector<int>
     return true;
 
   // for any of the unmatched fragments
-
+  
 
   // for any of the possible matches for that fragment (which are not already matched)
 
