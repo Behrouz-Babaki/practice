@@ -1,0 +1,17 @@
+#include<iostream>
+#include<string>
+using namespace std;
+
+int main (void)
+{
+  string str ("test");
+  printMaze(str);
+  return 0;
+}
+
+void printMaze(const string & str){
+  for (string::iterator itr = str.begin() ; itr != str.end() ; str++)
+    cout << *itr;
+
+  cout  << endl;
+}

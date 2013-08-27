@@ -1,0 +1,35 @@
+#include <iostream>
+#include <sstream>
+#include <string>
+
+using namespace std;
+
+double score (int , int , int);
+int main (void){
+  
+  int cases;
+  cin >> cases;
+  
+  for (int counter = 0 ; counter < cases  ; counter++)
+    {
+      int farmers;
+      double cost = 0;
+      cin >> farmers;
+      for (int farmercount = 0 ; farmercount < farmers ; farmercount ++){
+	int size , animals , env;
+	cin >> size >> animals >> env;
+	cost += score(size , animals , env);
+      }
+      
+      cout << (int) cost << endl;
+	
+    }
+
+  return 0;
+}
+
+double score (int size, int animals, int env){
+
+  double average = (double) size / animals;
+  return average * env;
+}

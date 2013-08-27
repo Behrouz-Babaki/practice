@@ -1,0 +1,37 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+int checkSentence(const string&);
+
+int main (void){
+  
+  while (cin.good())
+  {
+    string str;
+    getline(cin,str);
+    int result = checkSentence(str);
+    
+    switch (result){
+    case 0: 
+      cout << " -- is not a palindrome." << endl;
+      break;
+    case 1:
+      cout << " -- is a regular palindrome." << endl;
+      break;
+    case 2:
+      cout << " -- is a mirrored string." << endl;
+      break;
+    case 3:
+      cout << " -- is a mirrored palindrome." << endl;
+      break;
+    }
+    cout << endl;
+
+  }
+  return 0;
+}
+
+int checkSentence(const string& givenStr){
+  return 0;
+}

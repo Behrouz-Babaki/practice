@@ -1,0 +1,28 @@
+#include<iostream>
+#include<string>
+#include<sstream>
+using namespace std;
+
+int main (void){
+
+  string str;
+  istringstream sstr;
+  char dummy[100];
+  getline(cin , str);
+  
+  while (cin.good() && sstr.good()){
+    sstr.str(str);
+    int counter = 0;
+    while(!sstr.eof()){
+      sstr >> dummy;
+      if (dummy[0] >= 'A' && dummy[0] <= 'z')
+      counter++;
+    }
+    
+    cout << counter << endl;
+
+    sstr.clear();
+    getline(cin, str);
+  }
+  return 0;
+}

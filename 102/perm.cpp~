@@ -1,0 +1,22 @@
+#include <iostream>
+#include <sstream>
+
+void perm (char* input, int start , int end);
+void swap (char* input, int firstIndex , int secondIndex);
+
+int main (void){
+  
+  return 0;
+}
+
+void perm (char* input , int start , int end){
+  cout << input << endl;
+  for (int index = start , index <= end , index++)
+    perm (swap(input , start , index) , start + 1 , end);
+}
+
+void swap(char* input, int firstIndex , int secondIndex){
+  char temp = input[firstIndex];
+  input[firstIndex] = input [secondIndex];
+  input[secondIndex] = temp;
+}

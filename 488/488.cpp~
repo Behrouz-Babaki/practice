@@ -1,0 +1,11 @@
+#include<iostream>
+using namespace std;
+
+void printWaveForm(int,int);
+
+int main(void)
+{
+  return 0;
+}
+
+void printWave
