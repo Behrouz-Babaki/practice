@@ -1,0 +1,27 @@
+#include <iostream>
+#include <vector>
+#include <string>
+#include <stringstream>
+
+int main (void){
+  std::string str;
+  std::istringstream ss;
+  
+  while (cin.getline(str)){
+    ss.clear();
+    ss.str(str);
+    
+    int lenght;
+    ss >> length;
+
+    int * sequence = new int[length];
+    for (int counter = 0; counter < length; counter++)
+      ss >> sequence [counter];
+    
+    for (int counter = 0; counter < lenght; counter++)
+      std::cout << sequence [counter] << std::endl;
+
+    delete sequence;
+  }
+  return 0;
+}

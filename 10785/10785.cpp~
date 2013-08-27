@@ -1,0 +1,39 @@
+#include <iostream>
+#include <string>
+#include <sstream>
+using namespace std;
+
+void printName (int);
+
+int main (void){
+  
+  
+  int number_of_cases;
+  string str;
+  getline (cin, str);
+  istringstream sstr (str);
+  sstr >> number_of_cases;
+  
+  
+  for (int counter = 0; counter < number_of_cases; counter++){
+    sstr.clear();
+    getline(cin, str);
+    sstr.str(str);
+    
+    int lenght;
+    sstr >> lenght;
+
+    cout << "Case " << counter << ": ";
+    printName (lenght);
+  }
+
+  return 0;
+  
+}
+
+void printName (int length){
+
+  for (int counter = 0; counter < length; counter++)
+    cout << "A";
+
+}
