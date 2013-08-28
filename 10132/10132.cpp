@@ -131,23 +131,23 @@ bool checkNode (const vector<vector<bool> >& fragments, const vector<vector<int>
  *         desired string
  */
 bool testConcat (const vector<vector<bool > >& fragments, int index1, int index2, const vector<bool> & file){
-  bool first = second = true;
+  bool first = true, second = true;
   vector<bool>::const_iterator itrf = file.begin();
   for (vector<bool>::const_iterator itr1 = fragments[index1].begin(), itr1_end = fragments[index1].end(), itrf_end = file.end(); first && itr1 != itr1_end && itrf != itrf_end; itr1++, itrf++)
     if (*itr1 != *itrf)
       first = false;
-  for (vector<bool>::const_iterator itr2 = fragments[index2].begin(); itr2_end = fragments[index2].end(), itrf_end = file.end(); first && itr2 != itr2_end && itrf != itrf_end; itr2++, itrf++)
+  for (vector<bool>::const_iterator itr2 = fragments[index2].begin(), itr2_end = fragments[index2].end(), itrf_end = file.end(); first && itr2 != itr2_end && itrf != itrf_end; itr2++, itrf++)
     if (*itr2 != *itrf)
       first = false;
 
   if (first)
     return true;
 
-  vector<bool>::const_iterator itrf = file.begin();
+  itrf = file.begin();
   for (vector<bool>::const_iterator itr2 = fragments[index2].begin(), itr2_end = fragments[index2].end(), itrf_end = file.end(); second && itr2 != itr2_end && itrf != itrf_end; itr2++, itrf++)
     if (*itr2 != *itrf)
       second = false;
-  for (vector<bool>::const_iterator itr1 = fragments[index1].begin(); itr1_end = fragments[index1].end(), itrf_end = file.end(); second && itr1 != itr1_end && itrf != itrf_end; itr1++, itrf++)
+  for (vector<bool>::const_iterator itr1 = fragments[index1].begin(), itr1_end = fragments[index1].end(), itrf_end = file.end(); second && itr1 != itr1_end && itrf != itrf_end; itr1++, itrf++)
     if (*itr1 != *itrf)
       second = false;
   if (second)
