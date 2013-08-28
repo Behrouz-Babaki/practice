@@ -61,9 +61,12 @@ void createOriginalFile (const vector<vector<bool> > & fragments){
       vector<int> matched (fragments.size(), -1);
       matched[counter] = *itr;
       matched[*itr] = counter;
-      if (checkNode (fragments, possible_matches, matched, file))
+      if (checkNode (fragments, possible_matches, matched, file)){
         for (vector<bool>::iterator fileItr = file.begin(), fileItrEnd = file.end(); fileItr != fileItrEnd; fileItr++)
-          cout << (*fileItr ? '1' : '0') << endl;
+          cout << (*fileItr ? '1' : '0');
+        cout << endl;
+        return;
+      }
     }
   /// TODO (improvement) keep track of failed matches
 }
@@ -163,18 +166,17 @@ bool testConcat (const vector<vector<bool > >& fragments, int index1, int index2
 void findPossibleMatches (const vector<vector<bool> >& fragments, vector<vector<int> >& possible_matches){
   possible_matches.clear();
   possible_matches.resize(fragments.size());
-  int size;
+  int size = 0;
   for (vector<vector<bool> >::const_iterator itr = fragments.begin(), itrEnd = fragments.end(); itr != itrEnd; itr++)
     size += (*itr).size();
-  size /= 2;
+  size /= (fragments.size()/2);
   
-  int counter1 = 0, counter2 = 0;
-  for (vector<vector<bool> >::const_iterator itr1 = fragments.begin(), itr1End = fragments.end(); itr1 != itr1End; itr1++, counter1++)
+  int counter1 = 0;
+  for (vector<vector<bool> >::const_iterator itr1 = fragments.begin(), itr1End = fragments.end(); itr1 != itr1End; itr1++, counter1++){
+     int counter2 = 0;
     for (vector<vector<bool> >::const_iterator itr2  = fragments.begin(), itr2End = fragments.end(); itr2 != itr2End; itr2++, counter2++)
       if ((*itr1).size() + (*itr2).size() == size)
-      {
         possible_matches[counter1].push_back(counter2);
-        possible_matches[counter2].push_back(counter1);
-      }
+  }
   return;
 }
