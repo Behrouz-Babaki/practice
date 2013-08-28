@@ -103,7 +103,6 @@ bool checkNode (const vector<vector<bool> >& fragments, const vector<vector<int>
       if (matched[*matches_itr] == -1)
 
         /// if the match works for any of the two directions (concatenation to right/left)
-
         if (testConcat (fragments, *matches_itr, *unmatched_itr, file))
           /// mark the two as matched
         {
@@ -157,10 +156,8 @@ bool testConcat (const vector<vector<bool > >& fragments, int index1, int index2
        second && itr1 != itr1_end && itrf != itrf_end; itr1++, itrf++)
     if (*itr1 != *itrf)
       second = false;
-  if (second)
-    return true;
 
-  return false;
+  return second;
 }
 
 void findPossibleMatches (const vector<vector<bool> >& fragments, vector<vector<int> >& possible_matches){
@@ -175,7 +172,7 @@ void findPossibleMatches (const vector<vector<bool> >& fragments, vector<vector<
   for (vector<vector<bool> >::const_iterator itr1 = fragments.begin(), itr1End = fragments.end(); itr1 != itr1End; itr1++, counter1++){
      int counter2 = 0;
     for (vector<vector<bool> >::const_iterator itr2  = fragments.begin(), itr2End = fragments.end(); itr2 != itr2End; itr2++, counter2++)
-      if ((*itr1).size() + (*itr2).size() == size)
+      if (counter1 != counter2 && (*itr1).size() + (*itr2).size() == size)
         possible_matches[counter1].push_back(counter2);
   }
   return;
