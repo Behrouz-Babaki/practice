@@ -12,12 +12,11 @@ using std::string;
 using std::stringstream;
 using std::ws;
 using std::vector;
-using std::bitset;
 
 void createOriginalFile (const vector<vector<bool > > &);
 bool testConcat (const vector<vector<bool > >&, int, int, const vector<bool> &);
 bool checkNode (const vector<vector<bool> >&, const vector<vector<int> >&, vector<int>&, const vector<bool>&);
-void findPossibleMatches (const vector<vector<bool> >&, vector<vector<int> >);
+void findPossibleMatches (const vector<vector<bool> >&, vector<vector<int> >&);
 
 int main (void){
   int number_of_cases, bla;
@@ -133,10 +132,13 @@ bool checkNode (const vector<vector<bool> >& fragments, const vector<vector<int>
 bool testConcat (const vector<vector<bool > >& fragments, int index1, int index2, const vector<bool> & file){
   bool first = true, second = true;
   vector<bool>::const_iterator itrf = file.begin();
-  for (vector<bool>::const_iterator itr1 = fragments[index1].begin(), itr1_end = fragments[index1].end(), itrf_end = file.end(); first && itr1 != itr1_end && itrf != itrf_end; itr1++, itrf++)
+  for (vector<bool>::const_iterator itr1 = fragments[index1].begin(), itr1_end = fragments[index1].end(), itrf_end = file.end(); 
+       first && itr1 != itr1_end && itrf != itrf_end; itr1++, itrf++)
     if (*itr1 != *itrf)
       first = false;
-  for (vector<bool>::const_iterator itr2 = fragments[index2].begin(), itr2_end = fragments[index2].end(), itrf_end = file.end(); first && itr2 != itr2_end && itrf != itrf_end; itr2++, itrf++)
+
+  for (vector<bool>::const_iterator itr2 = fragments[index2].begin(), itr2_end = fragments[index2].end(), itrf_end = file.end(); 
+       first && itr2 != itr2_end && itrf != itrf_end; itr2++, itrf++)
     if (*itr2 != *itrf)
       first = false;
 
@@ -144,10 +146,12 @@ bool testConcat (const vector<vector<bool > >& fragments, int index1, int index2
     return true;
 
   itrf = file.begin();
-  for (vector<bool>::const_iterator itr2 = fragments[index2].begin(), itr2_end = fragments[index2].end(), itrf_end = file.end(); second && itr2 != itr2_end && itrf != itrf_end; itr2++, itrf++)
+  for (vector<bool>::const_iterator itr2 = fragments[index2].begin(), itr2_end = fragments[index2].end(), itrf_end = file.end(); 
+       second && itr2 != itr2_end && itrf != itrf_end; itr2++, itrf++)
     if (*itr2 != *itrf)
       second = false;
-  for (vector<bool>::const_iterator itr1 = fragments[index1].begin(), itr1_end = fragments[index1].end(), itrf_end = file.end(); second && itr1 != itr1_end && itrf != itrf_end; itr1++, itrf++)
+  for (vector<bool>::const_iterator itr1 = fragments[index1].begin(), itr1_end = fragments[index1].end(), itrf_end = file.end(); 
+       second && itr1 != itr1_end && itrf != itrf_end; itr1++, itrf++)
     if (*itr1 != *itrf)
       second = false;
   if (second)
@@ -156,8 +160,21 @@ bool testConcat (const vector<vector<bool > >& fragments, int index1, int index2
   return false;
 }
 
-
-void findPossibleMatches (const vector<vector<bool> >& fragments, vector<vector<int> > possible_matches){
-  /// TODO implement the function
+void findPossibleMatches (const vector<vector<bool> >& fragments, vector<vector<int> >& possible_matches){
+  possible_matches.clear();
+  possible_matches.resize(fragments.size());
+  int size;
+  for (vector<vector<bool> >::const_iterator itr = fragments.begin(), itrEnd = fragments.end(); itr != itrEnd; itr++)
+    size += (*itr).size();
+  size /= 2;
+  
+  int counter1 = 0, counter2 = 0;
+  for (vector<vector<bool> >::const_iterator itr1 = fragments.begin(), itr1End = fragments.end(); itr1 != itr1End; itr1++, counter1++)
+    for (vector<vector<bool> >::const_iterator itr2  = fragments.begin(), itr2End = fragments.end(); itr2 != itr2End; itr2++, counter2++)
+      if ((*itr1).size() + (*itr2).size() == size)
+      {
+        possible_matches[counter1].push_back(counter2);
+        possible_matches[counter2].push_back(counter1);
+      }
   return;
 }
