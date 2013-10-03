@@ -12,7 +12,7 @@ int main (void)
   cin >> N;
  while (N != 0){
    bool success = false;
-   for (int m = 1; ! success && m < 11; m++){
+   for (int m = 1; ! success && m <= N ; m++){
      vector<bool> vec (N, false);
      int index = 0, counter = 0;
      while (index != 12){
