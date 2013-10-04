@@ -9,6 +9,7 @@ using std::cin;
 using std::setw;
 using std::set;
 using std::pair;
+using std::setprecision;
 
 #define MAX_X 10000
 #define MAX_Y 10000
@@ -44,9 +45,9 @@ struct lineCompare{
 typedef set<set<pair<unsigned int, unsigned int>,pairCompare >,lineCompare > lineSet;
 
 
-
+void printSet(const pairSet&);
 void printResults (const pairSet&);
-void findLines (const pairSet &, const pairSet&,  lineSet&);
+void findLines (const pairSet &, lineSet&);
 
 int main(void) {
 
@@ -82,51 +83,60 @@ int main(void) {
 void printResults (const pairSet &instanceData)
 {
   lineSet lines;
-  pairSet current;
-  lineSet current_lines;
 
-  for (auto itr = instanceData.begin(), endItr = instanceData.end(); itr != endItr; itr++){
-
-    findLines(instanceData, current, current_lines);
-
-    for (auto lineItr = current_lines.begin(), lineItrEnd = current_lines.end(); lineItr != lineItrEnd; lineItr++){
+    findLines(instanceData, lines);
+    cout << "number of lines:" << lines.size() << endl;
+    for (auto lineItr = lines.begin(), lineItrEnd = lines.end(); lineItr != lineItrEnd; lineItr++){
       for (auto pointItr = lineItr->begin(), pointItrEnd = lineItr->end(); pointItr != pointItrEnd; pointItr++)
 	cout << "(" << setw(4) << pointItr->first << "," << setw(4) << pointItr->second << ")";
       cout << endl;
     }
-  }
-  
+    
   return;
 }
 
 /* find all the lines in the dataset that contain this point */
-void findLines (const pairSet &instanceData, const pairSet &current,  lineSet &current_lines){
-  current_lines.clear();
-  for (auto pairItr = current.begin(), pairItrEnd = current.end(); pairItr != pairItrEnd; pairItr++)
-    {
-      pair<unsigned int, unsigned int> point = *pairItr;
-      for (int xinc = -1; xinc <= 1; xinc++){
-	int x = point.first + xinc;
-	if (x < 0 || x > MAX_X)
-	  continue;
+void findLines (const pairSet &instanceData,  lineSet &lines){
 
+  lines.clear();
+  for (auto firstPairItr = instanceData.begin(), pairItrEnd = instanceData.end(); firstPairItr != pairItrEnd; firstPairItr++){
+    auto secondPairItr = firstPairItr;
+    secondPairItr++;
+    for (; secondPairItr != pairItrEnd; secondPairItr++)
+      {
 	pairSet current_line;
-	for (int yinc = -1; yinc <= 1; yinc++)
-	  {
-	    int y = point.second + yinc;
-	    if (xinc == 0 && yinc == 0 || y < 0 || y > MAX_Y)
-	      continue;
+	current_line.insert(*firstPairItr);
+	current_line.insert(*secondPairItr);
 
-	    pair<unsigned int, unsigned int> otherPoint (x,y);
-	    if (instanceData.find(otherPoint) != instanceData.end())
-	      current_line.insert(otherPoint);
+	for (auto candItr = instanceData.begin() , candItrEnd = instanceData.end(); candItr != candItrEnd; candItr++)
+	  {
+	    if (candItr == firstPairItr || candItr == secondPairItr)
+	      continue;
+	    
+	    // /******************************/
+	    // cout << "(" << firstPairItr->first << "," << firstPairItr->second << ")"
+	    // 	 << " (" << secondPairItr->first << "," << secondPairItr->second << ")"
+	    // 	 << " (" << candItr->first << "," << candItr->second << ")\t";
+	    // /******************************/
+
+	    if ((firstPairItr->first-secondPairItr->first)*(firstPairItr->second - candItr->second) == (firstPairItr->first - candItr->first)*(firstPairItr->second - secondPairItr->second))
+	      current_line.insert(*candItr);
+
 	  }
 
-	if (!current_line.empty())
-	  current_lines.insert(current_line);
+	if (current_line.size() > 2)
+	  {
+	    cout << "found a line" << endl;
+	    lines.insert(current_line);
+	  }
       }
-    }
-
+  }
+  cout << "lines found: " << lines.size() << endl;
   return;
 }
 
+void printSet(const pairSet& points){
+  for (auto itr = points.begin(), endItr = points.end(); itr != endItr; itr++)
+    cout << "(" << itr->first << "," << itr->second << ")\t";
+  cout << endl;
+}
