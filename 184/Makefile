@@ -1,6 +1,6 @@
 .PHONEY : all
 #CPPFLAGS = --coverage
-CPPFLAGS+=-std=c++0x
+#CPPFLAGS+=-std=c++0x
 all : 184
 
 184 : 184.o

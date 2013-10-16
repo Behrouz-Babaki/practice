@@ -20,7 +20,7 @@ struct pairCompare {
     if (left.first < right.first)
       return true;
     else if (left.first == right.first)
-      return (left.second <= right.second); /* The equality should not happen */
+      return (left.second < right.second); /* The equality should not happen */
 
     return false;
   }
@@ -32,7 +32,7 @@ struct lineCompare{
   bool operator() (const pairSet& left, const pairSet& right) const
   {
     /* assumption is that the sets are ordered */
-    auto leftItr = left.begin(), rightItr = right.begin();
+    pairSet::iterator leftItr = left.begin(), rightItr = right.begin();
     if (leftItr->first == rightItr->first && leftItr->second == rightItr->second){
       leftItr++;
       rightItr++;
@@ -87,8 +87,8 @@ void printResults (const pairSet &instanceData)
       cout << "No lines were found" << endl;
     else {
       cout << "The following lines were found:" << endl;
-    for (auto lineItr = lines.begin(), lineItrEnd = lines.end(); lineItr != lineItrEnd; lineItr++){
-      for (auto pointItr = lineItr->begin(), pointItrEnd = lineItr->end(); pointItr != pointItrEnd; pointItr++)
+      for (lineSet::iterator lineItr = lines.begin(), lineItrEnd = lines.end(); lineItr != lineItrEnd; lineItr++){
+	for (pairSet::iterator pointItr = lineItr->begin(), pointItrEnd = lineItr->end(); pointItr != pointItrEnd; pointItr++)
 	cout << "(" << setw(4) << pointItr->first << "," << setw(4) << pointItr->second << ")";
       cout << endl;
     }
@@ -101,22 +101,39 @@ void printResults (const pairSet &instanceData)
 void findLines (const pairSet &instanceData,  lineSet &lines){
 
   lines.clear();
-  for (auto firstPairItr = instanceData.begin(), pairItrEnd = instanceData.end(); firstPairItr != pairItrEnd; firstPairItr++){
-    auto secondPairItr = firstPairItr;
+  for (pairSet::iterator firstPairItr = instanceData.begin(), pairItrEnd = instanceData.end(); firstPairItr != pairItrEnd; firstPairItr++){
+
+    set<pair<unsigned int, unsigned int> > visited;
+    for (lineSet::iterator lineItr = lines.begin(), lineItrEnd = lines.end(); lineItr != lineItrEnd; lineItr++)
+      {
+
+      if (lineItr->find(*firstPairItr) != lineItr->end()){
+	visited.insert(lineItr->begin(), lineItr->end());
+
+      }
+      }
+
+    pairSet::iterator secondPairItr = firstPairItr;
     secondPairItr++;
     for (; secondPairItr != pairItrEnd; secondPairItr++)
       {
+	/* If this point has lied on a line, there is no need to check it again*/
+	if (visited.find(*secondPairItr) != visited.end())
+	  continue;
+
 	pairSet current_line;
 	current_line.insert(*firstPairItr);
 	current_line.insert(*secondPairItr);
 
-	for (auto candItr = instanceData.begin() , candItrEnd = instanceData.end(); candItr != candItrEnd; candItr++)
+	for (pairSet::iterator candItr = instanceData.begin() , candItrEnd = instanceData.end(); candItr != candItrEnd; candItr++)
 	  {
 	    if (candItr == firstPairItr || candItr == secondPairItr)
 	      continue;
 
-	    if ((firstPairItr->first-secondPairItr->first)*(firstPairItr->second - candItr->second) == (firstPairItr->first - candItr->first)*(firstPairItr->second - secondPairItr->second))
+	    if ((firstPairItr->first-secondPairItr->first)*(firstPairItr->second - candItr->second) == (firstPairItr->first - candItr->first)*(firstPairItr->second - secondPairItr->second)){
 	      current_line.insert(*candItr);
+	      visited.insert(*candItr);
+	    }
 
 	  }
 
