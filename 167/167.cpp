@@ -1,3 +1,4 @@
+//TODO The decision should be to find the column for each row
 #include <cstdlib>
 #include <iostream>
 #include <utility>
@@ -9,9 +10,11 @@ using std::cin;
 using std::vector;
 using std::pair;
 
+#define N 8
+
 void printBoard (int**);
 int bestScore (int**);
-int rec (vector<pair<int, int> >&, int**, int);
+int rec (vector<pair<int, int> >, int**, int);
 
 int main(void){
   int number_of_cases;
@@ -19,12 +22,12 @@ int main(void){
   for (int counter = 0; counter < number_of_cases; counter++)
     {
       int **board;
-      board = (int**) malloc (8*sizeof(*board));
-      for (int row = 0; row < 8; row++)
+      board = (int**) malloc (N*sizeof(*board));
+      for (int row = 0; row < N; row++)
 	{
 	  int *current_row;
-	  current_row = (int*) malloc (8*sizeof(*current_row));
-	  for (int col = 0; col < 8; col++)
+	  current_row = (int*) malloc (N*sizeof(*current_row));
+	  for (int col = 0; col < N; col++)
 	    cin >> current_row[col];
 
 	  board[row] = current_row;
@@ -37,9 +40,9 @@ int main(void){
 
 void printBoard (int ** board)
 {
-  for (int row = 0; row < 8; row++)
+  for (int row = 0; row < N; row++)
     {
-      for (int col = 0; col < 8; col++)
+      for (int col = 0; col < N; col++)
 	cout << board[row][col] << "\t";
       cout << endl;
     }
@@ -51,16 +54,20 @@ int bestScore (int** board)
   return rec (occupied, board, 0);
 }
 
-int rec (vector<pair<int, int> > &occupied, int** board, int partialScore)
+int rec (vector<pair<int, int> > occupied, int** board, int partialScore)
 {
 
-  if (occupied.size() == 8)
+  if (occupied.size() == N)
     return partialScore;
   
   int bestScore = -1;
   /* Go through all cells of the board */
-  for (int row = 0; row < 8; row++)
-    for (int col = 0; col < 8; col++)
+  for (int row = 0; row < N; row++){
+     if (occupied.size() == 0)
+        cout << "In row " << row << endl;
+     if (occupied.size() == 1)
+        cout << "     in row " << row << endl;
+    for (int col = 0; col < N; col++)
       {
 	bool isIllegal = false;
 	/* Verify that it is legal to put a new queen here */
@@ -85,5 +92,6 @@ int rec (vector<pair<int, int> > &occupied, int** board, int partialScore)
 	  bestScore = score;
 	
       }
+  }
   return bestScore;
 }
