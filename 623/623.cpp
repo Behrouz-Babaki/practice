@@ -14,9 +14,8 @@ void createFact(vector<vector<unsigned int> > &, int, int);
 void mult(const vector<unsigned int>&, const vector<unsigned int>&, vector<unsigned int>&);
 
 int main (void){
-  vector<vector<unsigned int> > vec(1000);
-
-  vec[0].push_back(1);
+  vector<vector<unsigned int> > vec;
+  vec.push_back(vector<unsigned int>(1,1));
   int max = 1;
 
   int number;
@@ -44,20 +43,27 @@ void createFact(vector<vector<unsigned int> > &vec, int number, int max){
   unsigned int currentNum = max + 1;
   while (currentNum <= number)
   {
-    vector<unsigned int> vecRep;
+    stack<unsigned int> stackRep;
     unsigned int normRep = currentNum;
     while (normRep > 0){
-      vecRep.push_back(normRep%10);
+      stackRep.push(normRep%10);
       normRep /= 10;
+    }
+    vector<unsigned int> vecRep;
+    while (!stackRep.empty()){
+      vecRep.push_back(stackRep.top());
+      stackRep.pop();
     }
     vector<unsigned int> next;
     mult (vec[currentNum - 2] , vecRep, next);
     vec.push_back(next);
     currentNum++;
   }
+  
 }
 
 void mult(const vector<unsigned int>& firstVec, const vector<unsigned int>& secondVec, vector<unsigned int>& resultVec){
+
   vector<queue<unsigned int> > constituents;
   int offset = 0;
   for (vector<unsigned int>::const_reverse_iterator itr = firstVec.rbegin(), endItr = firstVec.rend(); itr != endItr; itr++, offset++){
@@ -85,8 +91,8 @@ void mult(const vector<unsigned int>& firstVec, const vector<unsigned int>& seco
   stack<unsigned int> result;
   while (!finished){
     finished = true;
+    sum = carry;
     for (vector<queue<unsigned int> >::iterator itr = constituents.begin(), endItr = constituents.end(); itr != endItr; itr++){
-      sum = carry;
       if (!itr->empty()){
         sum += itr->front();
         itr->pop();
@@ -102,6 +108,12 @@ void mult(const vector<unsigned int>& firstVec, const vector<unsigned int>& seco
       result.push(carry%10);
       carry /= 10;
     }
+    
+    /* removing trailing zeros */
+    while (result.top() == 0)
+      result.pop();
+
+
     resultVec.clear();
     resultVec.reserve(result.size());
 
