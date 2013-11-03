@@ -11,24 +11,26 @@ using std::vector;
 using std::ws;
 
 int main(void){
-  int n;
+ size_t n;
   cin >> n >> ws;
-  for (int counter = 0; counter < n; counter++)
+  for (size_t counter = 0; counter < n; counter++)
     {
-      cin >> ws;
-      string line;
-      getline(cin,line);
-      vector<unsigned int> first, second;
-      
-      string::iterator itr= line.begin(), endItr = line.end();
-      for (; !isspace(*itr); itr++)
-	first.push_back((unsigned int) (*itr) - 48);
-      
-      while (isspace(*itr))
-      itr ++;
 
-      for (; itr != endItr; itr++)
-	second.push_back((unsigned int) (*itr) - 48);
+      vector<unsigned int> first, second;
+
+      int ch = cin.get();
+      while (!isspace(ch)){
+	first.push_back(ch - 48);
+	ch = cin.get();
+      }
+
+      while(isspace(ch))
+	ch = cin.get();
+
+      while (!isspace(ch)){
+	second.push_back(ch - 48);
+	ch = cin.get();
+      }
 
       unsigned int carry = 0;
       vector<unsigned int>::iterator firstItr , firstItrEnd, secondItr, secondItrEnd;
