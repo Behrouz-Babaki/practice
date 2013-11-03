@@ -12,13 +12,17 @@ using std::ws;
 
 int main(void){
  size_t n;
-  cin >> n >> ws;
+  cin >> n;
   for (size_t counter = 0; counter < n; counter++)
     {
 
       vector<unsigned int> first, second;
 
       int ch = cin.get();
+
+      while(isspace(ch))
+	ch = cin.get();
+
       while (!isspace(ch)){
 	first.push_back(ch - 48);
 	ch = cin.get();
@@ -58,11 +62,15 @@ int main(void){
 	carry /= 10;
       }
 
-      for (vector<unsigned int>::iterator itr = result.begin(), endItr = result.end(); itr != endItr; itr++)
-	if ((*itr) != 0)
-	  cout << *itr;
+      vector<unsigned int>::iterator itr = result.begin(), endItr = result.end();
+      for (; itr != endItr && (*itr == 0); itr++);
+
+      for (; itr != endItr; itr++)
+	cout << *itr;
+
       cout << endl;
     }
+
   return 0;
 }
 
