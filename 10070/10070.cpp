@@ -138,7 +138,7 @@ void vecDiff(const deque<unsigned int>& first, const deque<unsigned int>& second
       }
   }
 
-  while (result.front() == 0)
+  while (!result.empty() && result.front() == 0)
     result.pop_front();
 
   if (result.empty())
