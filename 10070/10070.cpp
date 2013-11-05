@@ -23,8 +23,10 @@ int main(void){
     bool divByFour = false, divByHundred = false, divByEleven = false, divByFive = false, divByThree = false, divByFH = false;
     
     deque<unsigned int> numDeque;
-    //TODO implement the function
     convertToDeque(line, numDeque);
+
+    while (numDeque.front() == 0)
+      numDeque.pop_front();
     
     if (isDivByThree(numDeque))
       divByThree = true;
@@ -81,22 +83,22 @@ int main(void){
 
 bool isDivByThree(const deque<unsigned int>& number){
 
-    if (number.size() == 1){
-      if (number[0] == 3 || number[0] == 6 || number[0] == 9)
-	return true;
-      else
-	return false;
-    }
-
-    deque<unsigned int> total;
-
-    for (deque<unsigned int>::const_iterator itr = number.begin(), endItr = number.end() ; itr != endItr; itr++)
-      vecSum(total, *itr);
-     
-    if (isDivByThree(total))
+  if (number.size() == 1){
+    if (number[0] == 3 || number[0] == 6 || number[0] == 9)
       return true;
+    else
+      return false;
+  }
 
-    return false;
+  deque<unsigned int> total;
+
+  for (deque<unsigned int>::const_iterator itr = number.begin(), endItr = number.end() ; itr != endItr; itr++)
+    vecSum(total, *itr);
+     
+  if (isDivByThree(total))
+    return true;
+
+  return false;
 }
 
 void vecSum (deque<unsigned int>& number , unsigned int summand){
@@ -127,15 +129,15 @@ void vecDiff(const deque<unsigned int>& first, const deque<unsigned int>& second
       sec = *secondItr;
       secondItr++;
     }
-      int sub =  carry + sec;
-      if (*itr >= sub){
-	result.push_front(*itr - sub);
-	carry = 0;
-      }
-      else {
-	result.push_front(*itr + 10 - sub);
-	carry = 1;
-      }
+    int sub =  carry + sec;
+    if (*itr >= sub){
+      result.push_front(*itr - sub);
+      carry = 0;
+    }
+    else {
+      result.push_front(*itr + 10 - sub);
+      carry = 1;
+    }
   }
 
   while (!result.empty() && result.front() == 0)
@@ -159,14 +161,14 @@ bool isDivByEleven(const deque<unsigned int>& number){
   deque<unsigned int> even;
 
   for (deque<unsigned int>::const_iterator itr = number.begin(), endItr = number.end() ; itr != endItr; itr++, isOdd = !isOdd)
-      {
-	unsigned int digit = *itr;
+    {
+      unsigned int digit = *itr;
 
-	if (isOdd)
-	  vecSum(odd, digit);
-	else 
-	  vecSum(even, digit);
-      }
+      if (isOdd)
+	vecSum(odd, digit);
+      else 
+	vecSum(even, digit);
+    }
   deque<unsigned int> diff;
   if (isBigger(odd, even))
     vecDiff(odd, even, diff);
@@ -201,7 +203,8 @@ bool isBigger(const deque<unsigned int>& first, const deque<unsigned int>& secon
 void convertToDeque(const string& str, deque<unsigned int>& d){
   d.clear();
   for (string::const_iterator itr = str.begin(), endItr = str.end(); itr != endItr; itr++)
-    d.push_back((int) (*itr) - 48);
+    if ((*itr) >= 48 && (*itr) <= 57)
+      d.push_back((int) (*itr) - 48);
 }
 
 void printDeq(const deque<unsigned int>& d){
