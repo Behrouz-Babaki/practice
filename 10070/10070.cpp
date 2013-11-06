@@ -19,7 +19,13 @@ void printDeq(const deque<unsigned int>& d);
 
 int main(void){
   string line;
+  bool first = true;
   while (getline(cin,line)){
+    if (!first)
+      cout << endl;
+    else
+      first = false;
+
     bool divByFour = false, divByHundred = false, divByEleven = false, divByFive = false, divByThree = false, divByFH = false;
     
     deque<unsigned int> numDeque;
@@ -75,8 +81,6 @@ int main(void){
     
     if (!leap && !huluculu && !bulukulu)
       cout << "This is an ordinary year." << endl;
-
-    cout << endl;
   }
   return 0;
 }
