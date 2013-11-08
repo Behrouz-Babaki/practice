@@ -43,7 +43,7 @@ int main(void){
       }
       parts.push_back(current);
     }
-    
+
     vector<unsigned int> sum;
     vector<pair<vector<unsigned int>::iterator, vector<unsigned int>::iterator> > itrVec;
     for (vector<vector<unsigned int> >::iterator itr = parts.begin(), endItr = parts.end(); itr != endItr; itr++)
@@ -55,25 +55,30 @@ int main(void){
     while (cont){
       cont = false;
       total = crr;
-      //TODO beautify by changing index to iterator
+      
     for (int vecCounter = 0, vecSize = parts.size(); vecCounter < vecSize; vecCounter++)
-      {
-	vector<unsigned int>::iterator currentItr = itrVec[vecCounter].first;
-	if (currentItr != itrVec[vecCounter].second){
-	  cont = true;
-	  total += *currentItr;
-	  currentItr ++;
-	}
+      if (itrVec[vecCounter].first != itrVec[vecCounter].second){
+        cont = true;
+        total += *(itrVec[vecCounter].first);
+        itrVec[vecCounter].first ++;
       }
-    sum.push_back(total % 10);
-    crr = total / 10;
+    
+    if (cont){
+      sum.push_back(total % 10);
+      crr = total / 10;
     }
+    
+    }
+    
     
     while (crr > 0)
       {
 	sum.push_back(crr%10);
 	crr /= 10;
       }
+
+    while (sum.size() > 1 && sum.back() == 0)
+       sum.pop_back();
     
     for (vector<unsigned int>::reverse_iterator sumItr = sum.rbegin(), sumEndItr = sum.rend(); sumItr != sumEndItr; sumItr ++)
       cout << *sumItr;
