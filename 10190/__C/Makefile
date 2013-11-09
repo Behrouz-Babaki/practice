@@ -1,9 +1,9 @@
 .PHONEY : all
-
+CFLAGS = -lm -lcrypt -O2 -pipe -ansi -DONLINE_JUDGE
 all : 10190
 
 10190 : 10190.o
-	g++ $< -o $@
+	gcc ${CFLAGS} $< -o $@
 
 %.o : %.c
-	gcc -c $< -o $@ 
+	gcc ${CFLAGS} -c $< -o $@ 
