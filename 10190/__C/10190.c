@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-void main(void){
+int main(void){
   unsigned int first, second;
   while (scanf("%u %u" ,&first, &second) != EOF){
     int flag = 1;
@@ -29,4 +29,5 @@ void main(void){
       printf("%u\n" , first);
     }
   }
+  return 0;
 }
