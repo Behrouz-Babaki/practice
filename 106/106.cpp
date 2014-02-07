@@ -55,16 +55,7 @@ void printStats(int n){
 	}
     }
     
-  /** calculating the count of numbers which are not part of any triple   */
-  int prev = 0;
-  int notPartOfSolution = 0;
-  for (set<int>::iterator itr = partOfSolution.begin() , endItr = partOfSolution.end(); itr != endItr; itr++){
-    notPartOfSolution += (*itr - prev - 1);
-    prev = *itr;
-  }
-      
-      
-  cout << tripleCount << " " << notPartOfSolution << endl;
+  cout << tripleCount << " " << n - partOfSolution.size() << endl;
 
 }
 
@@ -87,10 +78,19 @@ bool noCommonFactor (int x, int y, int z){
 }
 
 void findFactors (int x, vector<int>& x_factors){
-  for (int i = 2; i <= x; i++)
+  
+  double limit = sqrt(x);
+
+  for (int i = 2; i <= x; i++){
+    if (i > limit && x_factors.empty()){
+      x_factors.push_back(x);
+      break;
+    }
     if ( x % i == 0) {
       x_factors.push_back(i);
       while ( x % i == 0)
 	x /= i;
     }
+  }
+
 }

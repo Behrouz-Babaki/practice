@@ -12,8 +12,9 @@ using std::stringstream;
 using std::string;
 using std::vector;
 using std::max_element;
+using std::reverse;
 
-void printSequence (const vector<int>&, vector<int>::const_iterator);
+void printSequence (vector<int>&, vector<int>::iterator, int);
 
 int main (void){
   string line;
@@ -27,20 +28,42 @@ int main (void){
       pancakes.push_back(next);
       ss >> next;
     }
-
-    printSequence(pancakes, pancakes.begin());
+    
+    printSequence(pancakes, pancakes.begin(), 0);
+    cout << "0" << endl;
   }
 
   return 0;
 }
 
-void printSequence (const vector<int>& seq, vector<int>::const_iterator startItr){
+void printSequence (vector<int>& seq, vector<int>::iterator startItr, int startIndex){
 
-  if ((startItr + 1) == seq.end())
+  auto endItr = seq.end();
+
+  if ((startItr + 1) == endItr)
     return;
   
-  cout << "0" << endl;
+  auto maxItr = startItr;
+  int max = *startItr;
+  int maxIndex = startIndex;
 
+  int counter = startIndex;
+  for (auto itr = startItr; itr != endItr; counter++, itr++)
+      if (*itr > max){
+	max = *itr;
+	maxIndex = counter;
+	maxItr = itr;
+      }
+
+  if (maxIndex != startIndex){
+    cout << maxIndex + 1 << " ";
+    reverse (maxItr, endItr);
+    reverse (startItr, endItr);
+  }
+  
+  startItr++;
+  startIndex++;
+  printSequence (seq, startItr, startIndex);
 
   return;
 }
