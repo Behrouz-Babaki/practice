@@ -1,4 +1,4 @@
-package problem107;
+package uva_problems;
 
 import java.math.BigInteger;
 
@@ -6,13 +6,10 @@ public class P107 {
 
 	public static void main(String[] args) {
 		int heigth_initial, 
-			num_workers,
-			num_non_working;
+			num_workers;
 		
 		heigth_initial = 5764801;
 		num_workers = 1679616;
-		
-		num_non_working = 1;
 		
 		boolean success = false;
 		int N = 2;
