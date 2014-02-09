@@ -55,18 +55,37 @@ class Main {
 				int depth = 0;
 				/* Try different values of N until one matches what want */
 				while (!success
-						&& N.compareTo(height_initial.subtract(new BigInteger(
-								"1"))) != 1) {
+						&& N.compareTo(height_initial.subtract(BigInteger.ONE)) != 1) {
+
+					BigInteger NP1 = N.add(BigInteger.ONE);
+					BigInteger current_height = height_initial;
 					int val = 1;
-					BigInteger num;
-					while ((num = N.pow(val)).compareTo(num_workers) == -1)
-						val++;
-					if (num.compareTo(num_workers) == 0
-							&& ((N.add(BigInteger.ONE)).pow(val))
-									.compareTo(height_initial) == 0) {
-						success = true;
+					BigInteger[] divAndRem = current_height
+							.divideAndRemainder(NP1);
+					while (divAndRem[1].compareTo(BigInteger.ZERO) == 0
+							&& divAndRem[0].compareTo(BigInteger.ONE) == 1) {
+/*						System.out.println("quotient: " + divAndRem[0]
+								+ "\tremainder: " + divAndRem[1] + "\tN: " + N);
+*/						val++;
+						current_height = divAndRem[0];
+						divAndRem = current_height.divideAndRemainder(NP1);
+					}
+
+					if (divAndRem[1].compareTo(BigInteger.ZERO) == 0) 
 						depth = val;
-					} else
+					
+					if ((N.pow(depth)).compareTo(num_workers) == 0)
+						success = true;
+
+					/*
+					 * BigInteger num; while ((num =
+					 * N.pow(val)).compareTo(num_workers) == -1) val++; if
+					 * (num.compareTo(num_workers) == 0 &&
+					 * ((N.add(BigInteger.ONE)).pow(val))
+					 * .compareTo(height_initial) == 0) { success = true; depth
+					 * = val; }
+					 */
+					else
 						N = N.add(BigInteger.ONE);
 				}
 
