@@ -38,7 +38,6 @@ vector<vector<bool> > arr;      /**< dependencies */
 string sequence;                /**< printed sequence */
 
 void printSequence();
-void findRoots(vector<short int>&);
 int main(void){
 
   string line;
@@ -105,21 +104,6 @@ void printSequence(void){
     return;
   }
 
-  vector<short int> roots;
-  findRoots(roots);
-  for (vector<short int>::iterator itr = roots.begin(), itr_end  = roots.end();
-       itr != itr_end; itr++){
-    printed[*itr] = true;;
-    sequence.push_back(charList[*itr]);
-    printSequence();
-    printed[*itr] = false;
-    sequence.erase(sequence.end()-1);
-  }
-
-}
-
-void findRoots(vector<short int>& roots){
-  roots.clear();
   int num_vals = charMap.size();
   for (short int counter = 0; counter < num_vals; counter++)
     if (!printed[counter])
@@ -128,9 +112,13 @@ void findRoots(vector<short int>& roots){
       for (int rowCounter = 0; result && rowCounter < num_vals; rowCounter++)
         if (!printed[rowCounter] && arr[rowCounter][counter])
           result = false;
-      if (result)
-        roots.push_back(counter);
+
+      if (result){
+        printed[counter] = true;;
+        sequence.push_back(charList[counter]);
+        printSequence();
+        printed[counter] = false;
+        sequence.erase(sequence.end()-1);
+      }
     }
-
 }
-
