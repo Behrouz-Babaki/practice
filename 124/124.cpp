@@ -13,7 +13,6 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <set>
 #include <map>
 #include <utility>
 #include <cstdlib>
@@ -24,20 +23,19 @@ using std::cout;
 using std::endl;
 using std::string;
 using std::istringstream;
-using std::set;
 using std::pair;
 using std::make_pair;
 using std::map;
 using std::vector;
 
-vector<short int> printed;      /**< variables printed so far */
+vector<bool> printed;      /**< variables printed so far */
 map<char, int> charMap;
 vector<char> charList;
 vector<vector<bool> > arr;
 string sequence;
 
 void printSequence();
-void findRoots(vector<int>&);
+void findRoots(vector<short int>&);
 
 int main(void){
 
@@ -63,6 +61,8 @@ int main(void){
     size_t num_var = charMap.size();
     arr.clear();
     arr.resize(num_var, vector<bool> (num_var,false));
+    printed.clear();
+    printed.resize(num_var, false);
 
     getline(cin,line);
     if (!cin.good()){
@@ -71,7 +71,6 @@ int main(void){
     }
 
     istringstream ss2(line);
-    set<pair<char,char> > pairSet;
     while (!ss2.eof()){
       char first, second;
       ss2 >> first >> second;
@@ -99,19 +98,32 @@ void printSequence(void){
     return;
   }
 
-  vector<int> roots;
+  vector<short int> roots;
   findRoots(roots);
-  for (vector<int>::iterator itr = roots.begin(), itr_end  = roots.end();
+  for (vector<short int>::iterator itr = roots.begin(), itr_end  = roots.end();
        itr != itr_end; itr++){
-    printed.push_back(*itr);
+    printed[*itr] = true;;
     sequence.push_back(charList[*itr]);
     printSequence();
-    printed.pop_back();
+    printed[*itr] = false;
     sequence.erase(sequence.end()-1);
   }
 
 }
 
-void findRoots(vector<int>& roots){
-  //TODO implement the method
+void findRoots(vector<short int>& roots){
+  roots.clear();
+  int num_vals = charMap.size();
+  for (short int counter = 0; counter < num_vals; counter++)
+    if (!printed[counter])
+    {
+      bool result = true;
+      for (int rowCounter = 0; result && rowCounter < num_vals; rowCounter++)
+        if (!printed[rowCounter] && arr[rowCounter][counter])
+          result = false;
+      if (result)
+        roots.push_back(counter);
+    }
+
 }
+
