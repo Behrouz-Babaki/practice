@@ -28,15 +28,14 @@ using std::make_pair;
 using std::map;
 using std::vector;
 
-vector<bool> printed;      /**< variables printed so far */
-map<char, int> charMap;
-vector<char> charList;
-vector<vector<bool> > arr;
-string sequence;
+vector<bool> printed;           /**< variables printed so far */
+map<char, int> charMap;         /**< map of character to index */
+vector<char> charList;          /**< map of index to character */
+vector<vector<bool> > arr;      /**< dependencies */
+string sequence;                /**< printed sequence */
 
 void printSequence();
 void findRoots(vector<short int>&);
-
 int main(void){
 
   string line;
@@ -81,11 +80,12 @@ int main(void){
         if (firstItr != charMap.end() && secondItr != charMap.end())
           arr[firstItr->second][secondItr->second] = true;
       }
-      
-      printSequence();
-    }
 
-  getline(cin, line);
+    }
+    getline(cin, line);
+    printSequence();
+    if (!cin.eof())
+      cout << endl;
   }
 
   return 0;
