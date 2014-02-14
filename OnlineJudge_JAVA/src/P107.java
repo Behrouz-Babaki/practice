@@ -10,14 +10,14 @@ class P107 {
 
 		String height_initial_str = sc.next();
 		String num_workers_str = sc.next();
+		height_initial = new BigInteger(height_initial_str);
+		num_workers = new BigInteger(num_workers_str);
 
-		while (Integer.parseInt(height_initial_str) != 0
-				&& Integer.parseInt(num_workers_str) != 0) {
 
-			height_initial = new BigInteger(height_initial_str);
-			num_workers = new BigInteger(num_workers_str);
+		while (height_initial.compareTo(BigInteger.ZERO) != 0
+				&& num_workers.compareTo(BigInteger.ZERO) != 0) {
 
-			if (Integer.parseInt(num_workers_str) == 1) {
+			if (num_workers.compareTo(BigInteger.ONE) == 0) {
 				int depth = 0;
 				while ((new BigInteger("2").pow(depth))
 						.compareTo(height_initial) != 0)
@@ -47,7 +47,9 @@ class P107 {
 					BigInteger num;
 					while ((num = N.pow(val)).compareTo(num_workers) == -1)
 						val++;
-					if (num.compareTo(num_workers) == 0) {
+					if (num.compareTo(num_workers) == 0
+							&& ((N.add(new BigInteger("1"))).pow(val))
+									.compareTo(height_initial) == 0) {
 						success = true;
 						depth = val;
 					} else
@@ -60,23 +62,32 @@ class P107 {
 							.subtract(new BigInteger("1")))));
 					System.out.print("\t");
 
-					BigInteger current_height = new BigInteger(
-							String.valueOf(height_initial));
-					BigInteger current_number = BigInteger.ONE;
+					// BigInteger current_height = new BigInteger(
+					// String.valueOf(height_initial));
 					BigInteger total_height = BigInteger.ZERO;
-					while (current_height.intValue() >= 1) {
-						total_height = total_height.add(current_number
-								.multiply(current_height));
-						current_number = N.multiply(current_number);
-						current_height = current_height.divide(N
-								.add(new BigInteger("1")));
+					// while (current_height.intValue() >= 1) {
+					// total_height = total_height.add(current_number
+					// .multiply(current_height));
+					// current_number = N.multiply(current_number);
+					// current_height = current_height.divide(N
+					// .add(new BigInteger("1")));
+					// }
+					for (int counter = 0; counter <= depth; counter++) {
+						BigInteger numer = height_initial.multiply(N
+								.pow(counter));
+						BigInteger denom = (N.add(new BigInteger("1")))
+								.pow(counter);
+						BigInteger current_sum = numer.divide(denom);
+						total_height = total_height.add(current_sum);
 					}
-
 					System.out.println(total_height.toString());
 				}
 			}
 			height_initial_str = sc.next();
 			num_workers_str = sc.next();
+			height_initial = new BigInteger(height_initial_str);
+			num_workers = new BigInteger(num_workers_str);
+
 		}
 
 		sc.close();
