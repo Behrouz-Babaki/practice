@@ -14,9 +14,11 @@
 #include <sstream>
 #include <string>
 #include <map>
+#include <set>
 #include <utility>
 #include <cstdlib>
 #include <vector>
+
 
 using std::cin;
 using std::cout;
@@ -26,6 +28,7 @@ using std::istringstream;
 using std::pair;
 using std::make_pair;
 using std::map;
+using std::set;
 using std::vector;
 
 vector<bool> printed;           /**< variables printed so far */
@@ -45,16 +48,20 @@ int main(void){
     istringstream ss(line);
     charMap.clear();
     charList.clear();
-    short int charIdx = 0;
+    set<char> tempSet;
     while (!ss.eof()){
       char ch;
       ss >> ch;
       if (!ss.fail() &&
-        charMap.find(ch) == charMap.end()){
-          charMap[ch] = charIdx++;
-          charList.push_back(ch);
-      }
-
+        tempSet.find(ch) == tempSet.end())
+        tempSet.insert(ch);
+    }
+    
+    int charIdx = 0;
+    for (set<char>::const_iterator itr = tempSet.begin(), end_itr = tempSet.end();
+         itr != end_itr; itr++, charIdx++){
+      charList.push_back(*itr);
+      charMap[*itr] = charIdx;
     }
 
     size_t num_var = charMap.size();
