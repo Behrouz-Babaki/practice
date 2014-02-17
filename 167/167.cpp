@@ -1,12 +1,13 @@
-//TODO The decision should be to find the column for each row
 #include <cstdlib>
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <iomanip>
 
 using std::cout;
 using std::endl;
 using std::cin;
+using std::setw;
 using std::vector;
 using std::pair;
 
@@ -14,7 +15,7 @@ using std::pair;
 
 void printBoard (int**);
 int bestScore (int**);
-int rec (vector<pair<int, int> >, int**, int);
+int rec (vector<int>, int**, int);
 
 int main(void){
   int number_of_cases;
@@ -33,6 +34,7 @@ int main(void){
 	  board[row] = current_row;
 	}
       // printBoard(board);
+      cout << setw(5);
       cout << bestScore (board) << endl;
     }
   return 0;
@@ -50,48 +52,40 @@ void printBoard (int ** board)
 
 int bestScore (int** board)
 {
-  vector<pair<int, int> > occupied;
+  vector<int>  occupied;
   return rec (occupied, board, 0);
 }
 
-int rec (vector<pair<int, int> > occupied, int** board, int partialScore)
+int rec (vector<int> occupied, int** board, int partialScore)
 {
 
   if (occupied.size() == N)
     return partialScore;
   
   int bestScore = -1;
-  /* Go through all cells of the board */
-  for (int row = 0; row < N; row++){
-     if (occupied.size() == 0)
-        cout << "In row " << row << endl;
-     if (occupied.size() == 1)
-        cout << "     in row " << row << endl;
+  int row = occupied.size();
+  /* Go through all columns of this row */
     for (int col = 0; col < N; col++)
       {
-	bool isIllegal = false;
+         bool illegal = false;
 	/* Verify that it is legal to put a new queen here */
-	for (auto itr = occupied.begin(), endItr = occupied.end(); !isIllegal && itr != endItr; itr++)
-	  {
-	    int r = itr->first, c = itr->second;
-	    if (r == row || c == col || (r-row == c-col) || (r-row == col-c))
-	      isIllegal = true;
-	  }
-
-	if (isIllegal)
-	  continue;
-	
-	pair<int, int> newQueen (row,col);
-	occupied.push_back(newQueen);
-	int newpartialScore = partialScore + board[row][col];
-	int score = rec(occupied, board, newpartialScore);
-	occupied.pop_back();
-
-
-	if (score > bestScore)
-	  bestScore = score;
+        for (int r = 0; !illegal && r < row; r++){
+           int c = occupied[r];
+           if (r == row || c == col || (r-row == c-col) || (r-row == col-c))
+	      illegal = true;
+	}
+        
+        if (!illegal){
+           occupied.push_back(col);
+           int newpartialScore = partialScore + board[row][col];
+           int score = rec(occupied, board, newpartialScore);
+           occupied.pop_back();
+           
+           if (score > bestScore)
+              bestScore = score;
+        }
 	
       }
-  }
+
   return bestScore;
 }
