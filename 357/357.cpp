@@ -3,46 +3,48 @@ using std::cout;
 using std::cin;
 using std::endl;
 
-int ways(unsigned int);
+long long int ways(unsigned int, unsigned int);
 
-int w[30001];
+long long int w[30001][5];
+int coins[] = {50, 25, 10, 5, 1};
+const int coinTypes = 5;
 
 int main(void){
 
   for (int counter = 0; counter < 30001; counter++)
-    w[counter] = -1;
+    for (int coinCounter = 0; coinCounter < 5; coinCounter++)
+      w[counter][coinCounter] = -1;
   
   unsigned int val;
   
   while (cin >> val){
-    int waysCount = ways(val);
+
+    long long int waysCount = ways(val, 0);
     if (waysCount > 1)
       cout << "There are " << waysCount << " ways";
     else
       cout << "There is only 1 way";
     cout << " to produce " << val << " cents change." << endl;
+
   }
 
   return 0;
 }
 
-/* This is wrong, as it allows for symmetry */
-int ways(unsigned int val){
-  if (w[val] >= 0)
-    return w[val];
 
-  int waysCount = 0;
-  if (val > 50)
-    waysCount += ways(val - 50) + 1;
-  if (val > 25)
-    waysCount += ways(val - 25) + 1;
-  if (val > 10)
-    waysCount += ways(val - 10) + 1;
-  if (val > 5)
-    waysCount += ways(val - 5) + 1;
-  if (val > 1)
-    waysCount += ways(val - 1) + 1;
+long long int ways(unsigned int val, unsigned int boundIndex){
+  if (!val)
+    return 1;
+
+  if (w[val][boundIndex] >= 0)
+    return w[val][boundIndex];
+
+  long long int waysCount = 0;
+  for (unsigned int boundIdCounter = boundIndex; boundIdCounter < coinTypes; boundIdCounter++)
+    if (val >= coins[boundIdCounter])
+      waysCount += ways(val - coins[boundIdCounter], boundIdCounter);
   
-  w[val] = waysCount;
+  w[val][boundIndex] = waysCount;
   return waysCount;
 }
+
