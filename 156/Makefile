@@ -17,7 +17,7 @@ doc :
 	cd doc; $(DOXY) dox.dxy
 
 clean:
-	@ rm -f *.o *~ 
+	@ rm -f *.o *~ core $(MAINNAME)
 	@ cd doc ; rm -f *~ ; rm -f -r html
 
 INPUT = input
