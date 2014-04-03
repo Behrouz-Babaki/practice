@@ -14,28 +14,23 @@ void initVec(const string& str, vector<short>& vec);
 
 int main(void){
   string word;
-  set<string> ananas;
-  set<string> theRest;
+  vector<string> ananas;
+  vector<string> theRest;
   cin >> word;
   while (!word.length() == 1 || word.front() != '#'){
-    
+
+    //Faulty! Fix this!
     bool isAna = true;
-    vector<set<string>::const_iterator> itrVec;
-    set<string>::const_iterator ananas_itr = ananas.begin(), temp_itr;
-    while(ananas_itr != ananas.end()){
-      ananas_itr++;
-      temp_itr = ananas_itr;
-      ananas_itr--;
+    for (size_t i = 0; i<ananas.size(); i++)
       if(check(*ananas_itr, word)){
         isAna = false;
-        theRest.insert(*ananas_itr);
-        ananas.erase(ananas_itr);
+        theRest.push_back(ananas[i]);
+        ananas.remove(ananas[i]);
       }
-      ananas_itr = temp_itr;
     }
 
     
-    for(set<string>::const_iterator itr = theRest.begin(), endItr = theRest.end(); isAna && itr != endItr; itr++)
+    for(vector<string>::const_iterator itr = theRest.begin(), endItr = theRest.end(); isAna && itr != endItr; itr++)
       if (check(*itr,word))
         isAna = false;
 
@@ -47,7 +42,7 @@ int main(void){
     cin >> word;
   }
   
-  for (set<string>::const_iterator itr = ananas.begin(), endItr = ananas.end(); itr != endItr; itr++)
+  for (vector<string>::const_iterator itr = ananas.begin(), endItr = ananas.end(); itr != endItr; itr++)
     cout << *itr << endl;
 
   return 0;
