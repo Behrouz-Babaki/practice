@@ -14,23 +14,22 @@ void initVec(const string& str, vector<short>& vec);
 
 int main(void){
   string word;
-  vector<string> ananas;
-  vector<string> theRest;
+  set<string> ananas;
+  set<string> theRest;
   cin >> word;
   while (!word.length() == 1 || word.front() != '#'){
 
-    //Faulty! Fix this!
     bool isAna = true;
-    for (size_t i = 0; i<ananas.size(); i++)
-      if(check(*ananas_itr, word)){
-        isAna = false;
-        theRest.push_back(ananas[i]);
-        ananas.remove(ananas[i]);
+    for (auto itr = ananas.begin(), endItr = ananas.end(); itr != endItr; itr++){
+      if (check(*itr, word)){
+	isAna = false;
+	theRest.insert(*itr);
+	ananas.erase(itr);
       }
-    }
 
+    }
     
-    for(vector<string>::const_iterator itr = theRest.begin(), endItr = theRest.end(); isAna && itr != endItr; itr++)
+    for(set<string>::const_iterator itr = theRest.begin(), endItr = theRest.end(); isAna && itr != endItr; itr++)
       if (check(*itr,word))
         isAna = false;
 
@@ -42,7 +41,7 @@ int main(void){
     cin >> word;
   }
   
-  for (vector<string>::const_iterator itr = ananas.begin(), endItr = ananas.end(); itr != endItr; itr++)
+  for (set<string>::const_iterator itr = ananas.begin(), endItr = ananas.end(); itr != endItr; itr++)
     cout << *itr << endl;
 
   return 0;
@@ -57,7 +56,7 @@ bool check(const string& first, const string& second){
 
   vector<short> secondVec;
   initVec(second, secondVec);
-
+  
   bool result = true;
   for (vector<short>::const_iterator itr1 = firstVec.begin(), itr2 = secondVec.begin(), endItr = firstVec.end();
        result && itr1!=endItr; itr1++, itr2++)
@@ -68,10 +67,10 @@ bool check(const string& first, const string& second){
 }
 
 void initVec(const string &str, vector<short>& vec){
-  vec.resize(str.length(), 0);
+  vec.resize(26, 0);
   for (string::const_iterator itr = str.begin(), endItr = str.end(); itr!=endItr; itr++){
     short ch = static_cast<short> (*itr);
-  if(ch>97)
+  if(ch>=97)
       vec[ch - 97]++;
   else
       vec[ch - 65]++;
