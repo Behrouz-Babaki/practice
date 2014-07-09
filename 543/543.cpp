@@ -1,18 +1,21 @@
 #include <iostream>
 #include <vector>
+#include <set>
 
 using std::endl;
 using std::cout;
 using std::cin;
 using std::vector;
+using std::set;
 
 void goldbach(int);
-void generatePrimes(vector<int>&);
+void generatePrimes();
+
+set<int> primes;
 
 int main(void){
 
-  vector<int> primes;
-  generatePrimes(primes);
+  generatePrimes();
 
   int n = -1;
   cin >> n;
@@ -24,20 +27,28 @@ int main(void){
 }
 
 void goldbach(int n){
-  /**
-   * test output
-   * 
-   */
-  cout << n << " = " << n/2 << " + " << n/2 << endl;
+  for (auto x:primes)
+    if (primes.find(n-x) != primes.end()){
+      cout << n << " = " << x << " + " << n-x << endl;
+      return;
+    }
+  cout << "Goldbach's conjecture is wrong." << endl;
 }
 
-void generatePrimes(vector<int>& primes){
+void generatePrimes() {
   const int limit = 1000000;
-  int a[limit];
-  a[1] = 0;
-  for (int counter = 2 ; counter < limit; counter+=2){
-    a[counter] = 0;
-    a[counter+1] = 1;
-  }
-    
+  vector<bool> nums(limit+1, true);
+  nums[1] = false;
+  for (int counter = 2; counter <= limit; counter++)
+    if (nums[counter]){
+      int i = 2;
+      while (counter*i <= limit)
+	nums[counter*i++] = false;
+    }
+  
+  primes.clear();
+  for (int counter=2; counter <= limit; counter++)
+    if (nums[counter])
+      primes.insert(counter);
 }
+
