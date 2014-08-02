@@ -14,7 +14,7 @@ int main(void) {
 
   while (n > 0) {
 
-    vector<vector<int> > ways (2, vector<int> (n));
+    vector<vector<long> > ways (2, vector<long> (n));
     ways [0][0] = ways [1][0] = 1;
 
     if (n > 1) {
@@ -28,7 +28,7 @@ int main(void) {
     }
 
     long stableWays = ways[0][n-1] + ways[1][n-1];
-    cout << pow(2,n) - stableWays << endl;
+    cout << (long) pow(2,n) - stableWays << endl;
 
     cin >> n;
   }
