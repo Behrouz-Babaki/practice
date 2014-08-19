@@ -14,22 +14,19 @@ unsigned long int numSolutions;
 void backtrack(location*, int, int, int);
 int is_solution (location*, int, int, int);
 void process_solution (location*, int);
-void construct_candidates (location*, int, int, int, location**, int*);
+void construct_candidates (location*, int, int, int, location*, int*);
 
 int main (void) {
 
   int n;
   int k;
+  location partial[8];
   scanf ("%d %d", &n, &k);
-  while (n >= 1) {
-    location* partial = (location*) malloc(k*sizeof(location));
-    if (partial == NULL)
-      exit(1);
 
+  while (n >= 1) {
     numSolutions = 0;
     backtrack (partial, -1, n, k);
     printf ("%lu\n", numSolutions);
-    free (partial);
     scanf ("%d %d", &n, &k);
   }
   return 0;
@@ -40,16 +37,14 @@ void backtrack(location* partial, int position, int n, int k) {
     process_solution(partial, position);
   else {
     int nCandidates;
-    location** candidates = (location**) malloc(sizeof(location**));
+    location candidates[n*n];
     /*construct candidates for the next position*/
-    construct_candidates (partial, position + 1, n, k, candidates, &nCandidates);
+    construct_candidates (partial, position + 1, n, k, &candidates, &nCandidates);
     int counter;
     for (counter = 0; counter < nCandidates; counter++) {
-      partial [position + 1] = (*candidates)[counter];
+      partial [position + 1] = candidates[counter];
       backtrack (partial, position + 1, n, k);
     }
-    free (*candidates);
-    free (candidates);
   }
 }
 
@@ -61,8 +56,8 @@ void process_solution (location partial[], int position) {
   numSolutions ++;
 }
 
-void construct_candidates (location partial[], int position, int n, int k, location** candidates, int* nCandidates){
-  *candidates = (location *) malloc ((n*n -position)*sizeof(location));
+void construct_candidates (location partial[], int position, int n, int k, location candidates[], int* nCandidates){
+
   *nCandidates = 0;
 
   int index = 0;
@@ -73,7 +68,6 @@ void construct_candidates (location partial[], int position, int n, int k, locat
     lastRow = 0;
     lastCol = -1;
   }
-    
 
   int rowCounter, colCounter, prevCounter;
   rowCounter = lastRow;
@@ -92,13 +86,13 @@ void construct_candidates (location partial[], int position, int n, int k, locat
 	}
 
 	if (!attack) {
-	  (*candidates)[index].row = rowCounter;
-	  (*candidates)[index].col = colCounter;
+	  candidates[index].row = rowCounter;
+	  candidates[index].col = colCounter;
 	  index++;
 	  (*nCandidates) ++;
 	}
       }
-  
+
   for (rowCounter = lastRow + 1; rowCounter < n; rowCounter++)
     for (colCounter = 0; colCounter < n; colCounter++)
       {
@@ -114,12 +108,13 @@ void construct_candidates (location partial[], int position, int n, int k, locat
 	}
 
 	if (!attack) {
-	  (*candidates)[index].row = rowCounter;
-	  (*candidates)[index].col = colCounter;
+	  candidates[index].row = rowCounter;
+	  candidates[index].col = colCounter;
 	  index++;
 	  (*nCandidates) ++;
 	}
       }
+
 }
 
 
