@@ -10,11 +10,15 @@ typedef struct location_ {
 /*TODO improve by single allocation for max input size*/
 
 unsigned long int numSolutions;
+char places[8][8];
 
 void backtrack(location*, int, int, int);
 int is_solution (location*, int, int, int);
 void process_solution (location*, int);
 void construct_candidates (location*, int, int, int, location*, int*);
+void markattack(location loc, int n);
+void updateplaces (char** from , char** to, int n);
+void printplaces(int);
 
 int main (void) {
 
@@ -25,6 +29,12 @@ int main (void) {
 
   while (n >= 1) {
     numSolutions = 0;
+    /*initialize chessboard*/
+    int rowC,colC;
+    for (rowC = 0; rowC < n; rowC++)
+      for (colC=0; colC < n; colC++)
+	places[rowC][colC] = 0;
+
     backtrack (partial, -1, n, k);
     printf ("%lu\n", numSolutions);
     scanf ("%d %d", &n, &k);
@@ -33,17 +43,22 @@ int main (void) {
 }
 
 void backtrack(location* partial, int position, int n, int k) {
+  printplaces(n);
   if (is_solution(partial, position, n, k))
     process_solution(partial, position);
   else {
     int nCandidates;
     location candidates[n*n];
+    char oldplaces[n][n];
     /*construct candidates for the next position*/
     construct_candidates (partial, position + 1, n, k, &candidates, &nCandidates);
     int counter;
     for (counter = 0; counter < nCandidates; counter++) {
+      updateplaces(places, oldplaces, n);
+      markattack(candidates[counter], n);
       partial [position + 1] = candidates[counter];
       backtrack (partial, position + 1, n, k);
+      updateplaces (oldplaces, places, n);
     }
   }
 }
@@ -60,6 +75,7 @@ void construct_candidates (location partial[], int position, int n, int k, locat
 
   *nCandidates = 0;
 
+  /* use places here */
   int index = 0;
   int lastRow = partial[position - 1].row;
   int lastCol = partial[position - 1].col;
@@ -73,48 +89,65 @@ void construct_candidates (location partial[], int position, int n, int k, locat
   rowCounter = lastRow;
   /*This partitioning also not elegant!*/
     for (colCounter = lastCol + 1; colCounter < n; colCounter++)
-      {
-	char attack = 0;
-	for (prevCounter = 0; !attack && prevCounter < position; prevCounter++) {
-	  char prevRow = partial[prevCounter].row;
-	  char prevCol = partial[prevCounter].col;
-	  if (((rowCounter == prevRow) && (colCounter == prevCol)) ||
-	      (rowCounter - prevRow) == (colCounter - prevCol) ||
-	      (rowCounter - prevRow) == -(colCounter - prevCol)) {	      
-	    attack = 1;
-	  }
-	}
-
-	if (!attack) {
+      if (!places[rowCounter][colCounter])
+	{
 	  candidates[index].row = rowCounter;
 	  candidates[index].col = colCounter;
 	  index++;
 	  (*nCandidates) ++;
 	}
-      }
 
   for (rowCounter = lastRow + 1; rowCounter < n; rowCounter++)
     for (colCounter = 0; colCounter < n; colCounter++)
-      {
-	char attack = 0;
-	for (prevCounter = 0; !attack && prevCounter < position; prevCounter++) {
-	  char prevRow = partial[prevCounter].row;
-	  char prevCol = partial[prevCounter].col;
-	  if (((rowCounter == prevRow) && (colCounter == prevCol)) ||
-	      (rowCounter - prevRow) == (colCounter - prevCol) ||
-	      (rowCounter - prevRow) == -(colCounter - prevCol)) {	      
-	    attack = 1;
-	  }
-	}
-
-	if (!attack) {
+      if (!places[rowCounter][colCounter])
+	{
 	  candidates[index].row = rowCounter;
 	  candidates[index].col = colCounter;
 	  index++;
 	  (*nCandidates) ++;
 	}
-      }
 
 }
 
+/* The problem is here, with the way that I
+   have passed two-dimensional array */
+void updateplaces (char** from , char** to, int n) {
+  int c1, c2;
+  for (c1 = 0; c1 < n; c1++)
+    for (c2 = 0; c2 < n; c2++)
+      to[c1][c2] = from [c1][c2];
+}
 
+void markattack(location loc, int n) {
+  int row = loc.row;
+  int col = loc.col;
+
+  int hor[] = {-1, 1};
+  int ver[] = {-1, 1};
+  int i, j;
+  for (i = 0; i < 2; i++)
+    for (j = 0; j < 2; j++)
+      {
+	int r = row;
+	int c = col;
+	while  (r>0 && r<n && c>0 && c<n) {
+	  places [r][c] = 1;
+	  r += hor[i];
+	  c += ver[j];
+	}
+      }
+}
+
+void printplaces(int n)
+{
+  int i;
+  int j;
+  for (i = 0; i<n; i++){
+    for (j = 0; j<n; j++)
+	if (places[i][j])
+	  printf("*");
+	else
+	  printf("_");
+    printf ("\n");
+  }
+}
