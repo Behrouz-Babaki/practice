@@ -2,21 +2,19 @@
 #include <stdlib.h>
 
 
-struct location_ {
+typedef struct location_ {
   char row;
   char col;
-};
+} location;
 
-//TODO improve by single allocation for max input size
+/*TODO improve by single allocation for max input size*/
 
-typedef struct location_ location;
 unsigned long int numSolutions;
 
 void backtrack(location*, int, int, int);
 int is_solution (location*, int, int, int);
 void process_solution (location*, int);
 void construct_candidates (location*, int, int, int, location**, int*);
-void print_partial (location*, int);
 
 int main (void) {
 
@@ -38,13 +36,12 @@ int main (void) {
 }
 
 void backtrack(location* partial, int position, int n, int k) {
-  print_partial (partial, position);
   if (is_solution(partial, position, n, k))
     process_solution(partial, position);
   else {
     int nCandidates;
     location** candidates = (location**) malloc(sizeof(location**));
-    //construct candidates for the next position
+    /*construct candidates for the next position*/
     construct_candidates (partial, position + 1, n, k, candidates, &nCandidates);
     int counter;
     for (counter = 0; counter < nCandidates; counter++) {
@@ -61,7 +58,6 @@ int is_solution (location partial[], int position, int n, int k) {
 }
 
 void process_solution (location partial[], int position) {
-  printf ("^***\n");
   numSolutions ++;
 }
 
@@ -72,6 +68,7 @@ void construct_candidates (location partial[], int position, int n, int k, locat
   int index = 0;
   int lastRow = partial[position - 1].row;
   int lastCol = partial[position - 1].col;
+  /*Not elegant. Fix this!*/
   if (position == 0) {
     lastRow = 0;
     lastCol = -1;
@@ -80,9 +77,9 @@ void construct_candidates (location partial[], int position, int n, int k, locat
 
   int rowCounter, colCounter, prevCounter;
   rowCounter = lastRow;
+  /*This partitioning also not elegant!*/
     for (colCounter = lastCol + 1; colCounter < n; colCounter++)
       {
-	printf("trying (%d,%d)", rowCounter, colCounter);
 	char attack = 0;
 	for (prevCounter = 0; !attack && prevCounter < position; prevCounter++) {
 	  char prevRow = partial[prevCounter].row;
@@ -90,13 +87,11 @@ void construct_candidates (location partial[], int position, int n, int k, locat
 	  if (((rowCounter == prevRow) && (colCounter == prevCol)) ||
 	      (rowCounter - prevRow) == (colCounter - prevCol) ||
 	      (rowCounter - prevRow) == -(colCounter - prevCol)) {	      
-	    printf (" -> attacked by (%d,%d)\n", prevRow, prevCol);
 	    attack = 1;
 	  }
 	}
 
 	if (!attack) {
-	  printf (" -> success\n");
 	  (*candidates)[index].row = rowCounter;
 	  (*candidates)[index].col = colCounter;
 	  index++;
@@ -107,7 +102,6 @@ void construct_candidates (location partial[], int position, int n, int k, locat
   for (rowCounter = lastRow + 1; rowCounter < n; rowCounter++)
     for (colCounter = 0; colCounter < n; colCounter++)
       {
-	printf("trying (%d,%d)", rowCounter, colCounter);
 	char attack = 0;
 	for (prevCounter = 0; !attack && prevCounter < position; prevCounter++) {
 	  char prevRow = partial[prevCounter].row;
@@ -115,13 +109,11 @@ void construct_candidates (location partial[], int position, int n, int k, locat
 	  if (((rowCounter == prevRow) && (colCounter == prevCol)) ||
 	      (rowCounter - prevRow) == (colCounter - prevCol) ||
 	      (rowCounter - prevRow) == -(colCounter - prevCol)) {	      
-	    printf (" -> attacked by (%d,%d)\n", prevRow, prevCol);
 	    attack = 1;
 	  }
 	}
 
 	if (!attack) {
-	  printf (" -> success\n");
 	  (*candidates)[index].row = rowCounter;
 	  (*candidates)[index].col = colCounter;
 	  index++;
@@ -130,9 +122,4 @@ void construct_candidates (location partial[], int position, int n, int k, locat
       }
 }
 
-void print_partial (location* partial, int position) {
-  int counter; 
-  for (counter = 0; counter <= position; counter++)
-    printf("(%d,%d) ", partial[counter].row, partial[counter].col);
-  printf("\n");
-}
+

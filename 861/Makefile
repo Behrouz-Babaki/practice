@@ -3,7 +3,7 @@
 MAINNAME = 861
 CXX = g++
 CC = gcc
-CFLAGS = -g 
+CFLAGS = -lm -lcrypt -O2 -pipe -ansi -DONLINE_JUDGE
 
 all : $(MAINNAME)
 
