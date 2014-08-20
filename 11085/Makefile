@@ -1,7 +1,7 @@
 .PHONY : all doc clean
 
 SHELL := /bin/bash
-MAINNAME = 11805
+MAINNAME = 11085
 CXX = g++
 CC = gcc
 CFLAGS = -lm -lcrypt -O2 -pipe -ansi -DONLINE_JUDGE
