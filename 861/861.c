@@ -9,9 +9,9 @@ typedef struct location_ {
 
 /*TODO improve by single allocation for max input size*/
 
-unsigned long int numSolutions;
+unsigned long long int numSolutions;
 char **places;
-int* ways;
+unsigned long long int* ways;
 
 
 void backtrack(location*, int, int, int);
@@ -75,7 +75,7 @@ int main (void) {
       unsigned long int res = ways[counter] * blackWays[k-counter];
       numSolutions += res;
     }
-    printf ("%lu\n", numSolutions);
+    printf ("%llu\n", numSolutions);
     scanf ("%d %d", &n, &k);
   }
   return 0;
@@ -90,14 +90,13 @@ void backtrack(location* partial, int position, int n, int k) {
     int counter;
     /*construct candidates for the next position*/
     construct_candidates (partial, position + 1, n, k, &candidates, &nCandidates);
+    
     /* How many ways with this many bishops?*/
     ways[position+2] += nCandidates;
     for (counter = 0; counter < nCandidates; counter++) {
       location marked[64];      
-      markattack(candidates[counter], n, marked, &nmarked);
       partial [position + 1] = candidates[counter];
       backtrack (partial, position + 1, n, k);
-      revertmark(marked, nmarked);
     }
   }
 }
@@ -127,25 +126,53 @@ void construct_candidates (location partial[], int position, int n, int k, locat
   int rowCounter, colCounter, prevCounter;
   rowCounter = lastRow;
   /*This partitioning also not elegant!*/
-    for (colCounter = lastCol + 1; colCounter < n; colCounter++)
-      if (!places[rowCounter][colCounter])
-	{
-	  candidates[index].row = rowCounter;
-	  candidates[index].col = colCounter;
-	  index++;
-	  (*nCandidates) ++;
-	}
+  for (colCounter = lastCol + 1; colCounter < n; colCounter++)
+    {
+      if (places[rowCounter][colCounter])
+	continue;
+
+      char attack = 0;
+      for (prevCounter = 0; !attack && prevCounter < position; prevCounter++) {
+	char prevRow = partial[prevCounter].row;
+	char prevCol = partial[prevCounter].col;
+	if (((rowCounter == prevRow) && (colCounter == prevCol)) ||
+	    (rowCounter - prevRow) == (colCounter - prevCol) ||
+	    (rowCounter - prevRow) == -(colCounter - prevCol)) 
+	  attack = 1;
+	  
+      }
+
+      if (!attack) {
+	candidates[index].row = rowCounter;
+	candidates[index].col = colCounter;
+	index++;
+	(*nCandidates) ++;
+      }
+    }
 
   for (rowCounter = lastRow + 1; rowCounter < n; rowCounter++)
     for (colCounter = 0; colCounter < n; colCounter++)
-      if (!places[rowCounter][colCounter])
-	{
+      {
+	if (places[rowCounter][colCounter])
+	  continue;
+	char attack = 0;
+	for (prevCounter = 0; !attack && prevCounter < position; prevCounter++) {
+	  char prevRow = partial[prevCounter].row;
+	  char prevCol = partial[prevCounter].col;
+	  if (((rowCounter == prevRow) && (colCounter == prevCol)) ||
+	      (rowCounter - prevRow) == (colCounter - prevCol) ||
+	      (rowCounter - prevRow) == -(colCounter - prevCol)) 
+	    attack = 1;
+	  
+	}
+
+	if (!attack) {
 	  candidates[index].row = rowCounter;
 	  candidates[index].col = colCounter;
 	  index++;
 	  (*nCandidates) ++;
 	}
-
+      }
 }
 
 /* The problem is here, with the way that I
@@ -176,10 +203,8 @@ void markattack(location loc, int n, location marked[], int* nMarked) {
 	while  (r>=0 && r<n && c>=0 && c<n) {
 	  if (!places[r][c]) {
 	    places [r][c] = 1;
-	    location markedcell;
-	    markedcell.row = r;
-	    markedcell.col = c;
-	    marked[index] = markedcell;
+	    marked[index].row = r;
+	    marked[index].col = c;
 	    index ++;
 	  }
 	  r += hor[i];
@@ -195,7 +220,7 @@ void markattack(location loc, int n, location marked[], int* nMarked) {
 void revertmark(location marked[], int nMarked) {
   int counter; 
   for (counter = 0; counter < nMarked; counter++)
-      places[marked[counter].row][marked[counter].col] = 0;
+    places[marked[counter].row][marked[counter].col] = 0;
 }
 
 void printplaces(int n)
@@ -209,10 +234,10 @@ void printplaces(int n)
   int j;
   for (i = 0; i<n; i++){
     for (j = 0; j<n; j++)
-	if (places[i][j])
-	  printf("O |");
-	else
-	  printf("  |");
+      if (places[i][j])
+	printf("O |");
+      else
+	printf("  |");
     printf ("\n");
     for (counter = 0; counter < n*3; counter++)
       printf("-");
