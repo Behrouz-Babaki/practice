@@ -46,7 +46,7 @@ void backtrack(int* partial, int steps, int position) {
     
     for (counter = 0; counter < nCandidates; counter++) {
       partial [position + 1] = candidates[counter];
-      abs (candidates[counter] - locations[position + 1]);
+      extraSteps = abs (candidates[counter] - locations[position + 1]);
       backtrack (partial, steps + extraSteps, position + 1);
     }
   }
@@ -62,6 +62,33 @@ void process_solution (int partial[], int steps, int position) {
 }
 
 void construct_candidates (int partial[], int steps, int position, int candidates[], int* nCandidates){
+  int index = 0;
   *nCandidates = 0;
+
+  int origLocation = locations[position];
+  int directions[] = {-1, 1};
+  int counter;
+  int dirCounter;
+  for (counter = 0; counter < 8; counter++)
+    for (dirCounter = 0; dirCounter < 2; dirCounter++) {
+      int currentLocation = origLocation + directions[dirCounter];
+      if (currentLocation >= 0 && 
+	  currentLocation < 8)
+	{
+	  int attack = 0;
+	  int prevCounter;
+	  for (prevCounter = 0; !attack && prevCounter < position; prevCounter++)
+	    if (partial[prevCounter] == currentLocation ||
+		prevCounter - partial[prevCounter] == position - currentLocation ||
+		prevCounter - partial[prevCounter] == currentLocation - position)
+	      attack = 1;
+	
+
+	  if (!attack){
+	    candidates[index++] = currentLocation;
+	    *nCandidates++;
+	  }
+	}
+    }
 }
 
