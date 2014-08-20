@@ -10,7 +10,7 @@ typedef struct location_ {
 /*TODO improve by single allocation for max input size*/
 
 unsigned long int numSolutions;
-char places[8][8];
+char **places;
 
 void backtrack(location*, int, int, int);
 int is_solution (location*, int, int, int);
@@ -21,6 +21,10 @@ void updateplaces (char** from , char** to, int n);
 void printplaces(int);
 
 int main (void) {
+  places = (char**) malloc (sizeof(char*) * 8);
+  int counter;
+  for (counter = 0 ; counter < 8; counter++)
+    *(places + counter) = (char*) malloc (sizeof(char) * 8);
 
   int n;
   int k;
@@ -43,16 +47,17 @@ int main (void) {
 }
 
 void backtrack(location* partial, int position, int n, int k) {
-  printplaces(n);
   if (is_solution(partial, position, n, k))
     process_solution(partial, position);
   else {
     int nCandidates;
     location candidates[n*n];
-    char oldplaces[n][n];
+    char **oldplaces = (char**) malloc (sizeof(char*) * n);
+    int counter;
+    for (counter = 0; counter < n; counter++)
+      *(oldplaces+counter) = (char*) malloc (sizeof(char) * n);
     /*construct candidates for the next position*/
     construct_candidates (partial, position + 1, n, k, &candidates, &nCandidates);
-    int counter;
     for (counter = 0; counter < nCandidates; counter++) {
       updateplaces(places, oldplaces, n);
       markattack(candidates[counter], n);
@@ -114,11 +119,14 @@ void construct_candidates (location partial[], int position, int n, int k, locat
 void updateplaces (char** from , char** to, int n) {
   int c1, c2;
   for (c1 = 0; c1 < n; c1++)
-    for (c2 = 0; c2 < n; c2++)
-      to[c1][c2] = from [c1][c2];
+    for (c2 = 0; c2 < n; c2++) {
+      *(*(to+c1) + c2) = *(*(from+c1) + c2);
+    }
 }
 
 void markattack(location loc, int n) {
+  /* printf("before marking (%d,%d):\n", loc.row, loc.col); */
+  /* printplaces(n); */
   int row = loc.row;
   int col = loc.col;
 
@@ -130,24 +138,35 @@ void markattack(location loc, int n) {
       {
 	int r = row;
 	int c = col;
-	while  (r>0 && r<n && c>0 && c<n) {
+	while  (r>=0 && r<n && c>=0 && c<n) {
 	  places [r][c] = 1;
 	  r += hor[i];
 	  c += ver[j];
 	}
       }
+
+  /* printf("after marking:\n"); */
+  /* printplaces(n); */
 }
 
 void printplaces(int n)
 {
+  int counter;
+  for (counter = 0; counter < n*3; counter++)
+    printf("-");
+  printf("\n");
+
   int i;
   int j;
   for (i = 0; i<n; i++){
     for (j = 0; j<n; j++)
 	if (places[i][j])
-	  printf("*");
+	  printf("O |");
 	else
-	  printf("_");
+	  printf("  |");
     printf ("\n");
+    for (counter = 0; counter < n*3; counter++)
+      printf("-");
+    printf("\n");
   }
 }
