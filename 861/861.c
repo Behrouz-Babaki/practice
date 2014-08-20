@@ -25,7 +25,7 @@ void printplaces(int);
 
 int main (void) {
   places = (char**) malloc (sizeof(char*) * 8);
-  ways = (int*) malloc (sizeof(int) * 7);
+  ways = (int*) malloc (sizeof(int) * 9);
   int counter;
   for (counter = 0 ; counter < 8; counter++) 
     *(places + counter) = (char*) malloc (sizeof(char) * 8);
@@ -46,17 +46,33 @@ int main (void) {
 	else
 	  places[rowC][colC] = 1;
 
-    for (counter = 0; counter < k; counter++)
+    *ways = 1;
+    for (counter = 1; counter <= k; counter++)
+      *(ways+counter) = 0;
+
+    backtrack (partial, -1, n, k);
+
+    int blackWays[9];
+    for (counter =  0; counter <= 8; counter++)
+      blackWays[counter] = ways[counter];
+
+    for (rowC = 0; rowC < n; rowC++)
+      for (colC=0; colC < n; colC++)
+	if ((rowC + colC) % 2 == 0)
+	  places[rowC][colC] = 1;
+	else
+	  places[rowC][colC] = 0;
+
+    *ways = 1;
+    for (counter = 1; counter <= k; counter++)
       *(ways+counter) = 0;
 
     backtrack (partial, -1, n, k);
 
     numSolutions = 0;
-    /* TODO check the /2 later*/
-    for (counter = 0; counter < k/2; counter++) {
-      unsigned long int res = ways[counter] * ways[k-counter-2];
-      if (counter != k-counter-2)
-	res *= 2;
+
+    for (counter = 0; counter <= k; counter++) {
+      unsigned long int res = ways[counter] * blackWays[k-counter];
       numSolutions += res;
     }
     printf ("%lu\n", numSolutions);
@@ -75,7 +91,7 @@ void backtrack(location* partial, int position, int n, int k) {
     /*construct candidates for the next position*/
     construct_candidates (partial, position + 1, n, k, &candidates, &nCandidates);
     /* How many ways with this many bishops?*/
-    ways[position+1] += nCandidates;
+    ways[position+2] += nCandidates;
     for (counter = 0; counter < nCandidates; counter++) {
       location marked[64];      
       markattack(candidates[counter], n, marked, &nmarked);
