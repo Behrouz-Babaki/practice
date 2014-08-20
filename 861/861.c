@@ -11,6 +11,7 @@ typedef struct location_ {
 
 unsigned long int numSolutions;
 char **places;
+int* ways;
 
 void backtrack(location*, int, int, int);
 int is_solution (location*, int, int, int);
@@ -22,8 +23,9 @@ void printplaces(int);
 
 int main (void) {
   places = (char**) malloc (sizeof(char*) * 8);
+  ways = (int*) malloc (sizeof(int) * 7);
   int counter;
-  for (counter = 0 ; counter < 8; counter++)
+  for (counter = 0 ; counter < 8; counter++) 
     *(places + counter) = (char*) malloc (sizeof(char) * 8);
 
   int n;
@@ -37,9 +39,24 @@ int main (void) {
     int rowC,colC;
     for (rowC = 0; rowC < n; rowC++)
       for (colC=0; colC < n; colC++)
-	places[rowC][colC] = 0;
+	if ((rowC + colC) % 2 == 0)
+	  places[rowC][colC] = 0;
+	else
+	  places[rowC][colC] = 1;
+
+    for (counter = 0; counter < k; counter++)
+      *(ways+counter) = 0;
 
     backtrack (partial, -1, n, k);
+
+    numSolutions = 0;
+    /* TODO check the /2 later*/
+    for (counter = 0; counter < k/2; counter++) {
+      unsigned long int res = ways[counter] * ways[k-counter-2];
+      if (counter != k-counter-2)
+	res *= 2;
+      numSolutions += res;
+    }
     printf ("%lu\n", numSolutions);
     scanf ("%d %d", &n, &k);
   }
@@ -58,6 +75,8 @@ void backtrack(location* partial, int position, int n, int k) {
       *(oldplaces+counter) = (char*) malloc (sizeof(char) * n);
     /*construct candidates for the next position*/
     construct_candidates (partial, position + 1, n, k, &candidates, &nCandidates);
+    /* How many ways with this many bishops?*/
+    ways[position+1] += nCandidates;
     for (counter = 0; counter < nCandidates; counter++) {
       updateplaces(places, oldplaces, n);
       markattack(candidates[counter], n);
