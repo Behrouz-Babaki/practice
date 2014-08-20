@@ -13,11 +13,13 @@ unsigned long int numSolutions;
 char **places;
 int* ways;
 
+
 void backtrack(location*, int, int, int);
 int is_solution (location*, int, int, int);
 void process_solution (location*, int);
 void construct_candidates (location*, int, int, int, location*, int*);
-void markattack(location loc, int n);
+void markattack(location loc, int n, location marked[], int* nMarked);
+void revertmark(location marked[], int nMarked);
 void updateplaces (char** from , char** to, int n);
 void printplaces(int);
 
@@ -67,22 +69,19 @@ void backtrack(location* partial, int position, int n, int k) {
   if (is_solution(partial, position, n, k))
     process_solution(partial, position);
   else {
-    int nCandidates;
+    int nCandidates, nmarked;
     location candidates[n*n];
-    char **oldplaces = (char**) malloc (sizeof(char*) * n);
     int counter;
-    for (counter = 0; counter < n; counter++)
-      *(oldplaces+counter) = (char*) malloc (sizeof(char) * n);
     /*construct candidates for the next position*/
     construct_candidates (partial, position + 1, n, k, &candidates, &nCandidates);
     /* How many ways with this many bishops?*/
     ways[position+1] += nCandidates;
     for (counter = 0; counter < nCandidates; counter++) {
-      updateplaces(places, oldplaces, n);
-      markattack(candidates[counter], n);
+      location marked[64];      
+      markattack(candidates[counter], n, marked, &nmarked);
       partial [position + 1] = candidates[counter];
       backtrack (partial, position + 1, n, k);
-      updateplaces (oldplaces, places, n);
+      revertmark(marked, nmarked);
     }
   }
 }
@@ -143,11 +142,12 @@ void updateplaces (char** from , char** to, int n) {
     }
 }
 
-void markattack(location loc, int n) {
+void markattack(location loc, int n, location marked[], int* nMarked) {
   /* printf("before marking (%d,%d):\n", loc.row, loc.col); */
   /* printplaces(n); */
   int row = loc.row;
   int col = loc.col;
+  int index = 0;
 
   int hor[] = {-1, 1};
   int ver[] = {-1, 1};
@@ -158,14 +158,28 @@ void markattack(location loc, int n) {
 	int r = row;
 	int c = col;
 	while  (r>=0 && r<n && c>=0 && c<n) {
-	  places [r][c] = 1;
+	  if (!places[r][c]) {
+	    places [r][c] = 1;
+	    location markedcell;
+	    markedcell.row = r;
+	    markedcell.col = c;
+	    marked[index] = markedcell;
+	    index ++;
+	  }
 	  r += hor[i];
 	  c += ver[j];
 	}
       }
 
+  *nMarked = index;
   /* printf("after marking:\n"); */
   /* printplaces(n); */
+}
+
+void revertmark(location marked[], int nMarked) {
+  int counter; 
+  for (counter = 0; counter < nMarked; counter++)
+      places[marked[counter].row][marked[counter].col] = 0;
 }
 
 void printplaces(int n)
