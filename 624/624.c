@@ -12,7 +12,6 @@ int is_solution (int partial[], int position, int remaining);
 
 int main(void) {
   int result;
-  /*Arbitrarily chosen constant*/
   char line[1024];
   while (fgets(line, sizeof(line), stdin)) {
     int counter;
@@ -20,15 +19,13 @@ int main(void) {
     long int v;
     tapeLength = strtol (line, &e, 10);
     p = e;
-    for (counter = 0; ; p = e,counter++) {
+    numTracks = strtol (p, &e, 10);
+    for (p = e, counter = 0; counter < numTracks; p = e,counter++) {
       v = strtol(p, &e, 10);
-      if (e ==p)
-	break;
       durations[counter] = v;
     }
 
     best = tapeLength;
-    numTracks = counter;
     int partial [20];
     backtrack(partial, -1, tapeLength);
     
@@ -44,18 +41,19 @@ int main(void) {
 }
 
 void backtrack(int partial[], int position, int remaining) {
+
   int waste = is_solution(partial, position, remaining);
   if (waste >= 0) {
     if (waste < best) {
       best = waste;
       int counter;
-      for (counter = 0; counter < position; counter++)
+      for (counter = 0; counter <= position; counter++)
 	bestSol[counter] = partial[counter];
-      bestCount = position;
+      bestCount = position+1;
     }
   }
 
-  else {
+  if (waste < 0) {
     /* include track */
     if (durations[position+1] <= remaining) {
       partial[position+1] = 1;
@@ -71,7 +69,7 @@ void backtrack(int partial[], int position, int remaining) {
 int is_solution (int partial[], int position, int remaining) {
   int counter;
   for (counter = position+1; counter < numTracks; counter++)
-    if (durations[counter] < remaining)
+    if (durations[counter] <= remaining)
       return -1;
   return remaining;
 }
