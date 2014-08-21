@@ -1,4 +1,4 @@
-.PHONY : all doc clean
+.PHONY : all doc clean test valgrind
 
 SHELL := /bin/bash
 MAINNAME = 193
@@ -15,7 +15,7 @@ $(MAINNAME) : $(MAINNAME).o
 	$(CC) $(CFLAGS) -c  $< -o $@ 
 
 clean:
-	@ rm -f *.o *~ core $(MAINNAME)
+	@ rm -f *.o *~ core $(MAINNAME) callgrind.out.*
 
 INPUT = input
 OUTPUT = output
@@ -26,3 +26,6 @@ test:	$(MAINNAME)
 	@ cat $(INPUT) | ./$(MAINNAME)
 	@ echo 
 	@ diff <(cat $(OUTPUT)) <(cat $(INPUT) | ./$(MAINNAME)) || exit 0
+
+valgrind: $(MAINNAME)
+	@ valgrind --tool=callgrind --input-fd=3 ./$(MAINNAME) < $(INPUT) 3</dev/tty
