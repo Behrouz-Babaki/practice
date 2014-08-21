@@ -34,7 +34,7 @@ int main(void) {
 }
 
 void backtrack(int tail, int position) {
-  if (position == n)
+  if (position == n-1)
     found = 1;
   else if (!found) {
     int nCandidates;
@@ -64,15 +64,17 @@ void construct_candidates (int tail, int position, int candidates[], int sides[]
       if (!used[counter]) {
 	if (heads[counter] == tail &&
 	    (position != (n-1) || tails[counter] == lHead)) {
-	  candidates[candId++] = counter;
+	  candidates[candId] = counter;
 	  sides[candId] = 1;
-	  *nCandidates++;
+	  candId++;
+	  (*nCandidates)++;
 	}
-	if (tails[counter] == tail &&
+	else if (tails[counter] == tail &&
 	    (position != (n-1) || heads[counter] == lHead)) {
-	  candidates[candId++] = counter;
+	  candidates[candId] = counter;
 	  sides[candId] = 0;
-	  *nCandidates++;
+	  candId++;
+	  (*nCandidates)++;
 	}
       }
     }
