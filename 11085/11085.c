@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define VR 0
-
 unsigned long long int numSolutions;
 typedef int location;
 int locations[8];
@@ -10,7 +8,6 @@ int bestSolution;
 
 void backtrack(int*, int, int);
 void construct_candidates (int*, int, int, int*, int*);
-void printplaces (int*, int, int);
 
 int main (void) {
   int counter;
@@ -40,12 +37,6 @@ int main (void) {
 }
 
 void backtrack(int* partial, int steps, int position) {
-  if (VR) {
-    printf("steps:%d\n", steps);
-    printplaces(partial, position+1, steps);
-    if (position == 7)
-      printf ("solution found\n");
-  }
   if (position == 7 && steps < bestSolution)
     bestSolution = steps;
   else {
@@ -60,9 +51,6 @@ void backtrack(int* partial, int steps, int position) {
       partial [position + 1] = candidates[counter];
       if(candidates[counter] != locations[position + 1])
 	extraSteps = 1;
-      if(VR)
-	printf("steps:%d candidates[%d]:%d locations[%d]:%d -> extraSteps:%d\n",
-	       steps, counter, candidates[counter], position+1, locations[position+1], extraSteps);
       if (steps + extraSteps < bestSolution)
 	backtrack (partial, steps + extraSteps, position + 1);
     }
@@ -78,13 +66,10 @@ void construct_candidates (int partial[], int steps, int position, int candidate
   int directions[] = {-1, 1};
   int counter;
   int dirCounter;
-  if (VR)
-    printf ("in column %d, original location: %d  ", position, origLocation);
+
   for (counter = 0; counter < 8; counter++)
     for (dirCounter = 0; dirCounter < 2; dirCounter++) {
       int currentLocation = origLocation + counter * directions[dirCounter];
-      if (VR)
-	printf ("next  location:%d --- ", currentLocation);
       if (currentLocation >= 0 && 
 	  currentLocation < 8)
 	{
@@ -93,55 +78,16 @@ void construct_candidates (int partial[], int steps, int position, int candidate
 	  for (prevCounter = 0; !attack && prevCounter < position; prevCounter++)
 	    if (partial[prevCounter] == currentLocation ||
 		prevCounter - position == partial[prevCounter] - currentLocation ||
-		prevCounter - position == currentLocation - partial[prevCounter]) {
-	      if (VR)
-		printf("!(%d,%d) ", partial[prevCounter], prevCounter);
+		prevCounter - position == currentLocation - partial[prevCounter]) 
 	      attack = 1;
-	    }
+
 	
 
 	  if (!attack){
 	    candidates[index++] = currentLocation;
 	    (*nCandidates)++;
-	    if (VR)
-	      printf (" added ");
 	  }
 	}
     }
-
-  if (VR)
-    printf ("\n");
-}
-
-void printplaces(int partial[], int position, int steps)
-{
-  printf ("position:%d\n" , position);
-  int counter;
-  int n = 8;
-  for (counter = 0; counter < n; counter++)
-    printf(" %d ", counter);
-  printf ("\n*");
-
-  for (counter = 0; counter < n*3; counter++)
-    printf("-");
-  printf("\n");
-
-  int i;
-  int j;
-
-  for (i = 0; i<n; i++){
-    if (VR)
-      printf("%d", i);
-    for (j = 0; j<n; j++)
-      if (j < position && partial[j] == i ||
-	  j >= position && locations[j] == i)
-	printf("O |");
-      else
-	printf("  |");
-    printf ("\n");
-    for (counter = 0; counter < n*3; counter++)
-      printf("-");
-    printf("\n");
-  }
 }
 
