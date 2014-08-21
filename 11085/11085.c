@@ -27,7 +27,7 @@ int main (void) {
       locations[counter] = value - 1;
     }
     
-    bestSolution = 64;
+    bestSolution = 8;
     int partial[8];
     backtrack(partial, 0, -1);
 
@@ -52,13 +52,14 @@ void backtrack(int* partial, int steps, int position) {
     int nCandidates;
     int candidates[8];
     int counter;
-    int extraSteps;
+    int extraSteps = 0;
     /*construct candidates for the next position*/
     construct_candidates (partial, steps, position + 1, candidates, &nCandidates);
     /* printf("number of candidates:%d\n" , nCandidates); */
     for (counter = 0; counter < nCandidates; counter++) {
       partial [position + 1] = candidates[counter];
-      extraSteps = abs (candidates[counter] - locations[position + 1]);
+      if(candidates[counter] != locations[position + 1])
+	extraSteps = 1;
       if(VR)
 	printf("steps:%d candidates[%d]:%d locations[%d]:%d -> extraSteps:%d\n",
 	       steps, counter, candidates[counter], position+1, locations[position+1], extraSteps);
