@@ -3,8 +3,8 @@
 #pragma GCC diagnostic ignored "-Wunused-result"
 #define VR 0
 
-int edges[100][100];
-int bestBlack[100];
+int edges[500][500];
+int bestBlack[500];
 int nNodes;
 int best;
 int nBlack;
@@ -33,7 +33,7 @@ int main(void) {
 	edges[second-1][first-1] = 1;
       }
 
-      int color[100];
+      int color[500];
       int counter;
       for (counter=0; counter < nNodes; counter++) 
 	color[counter] = -1;
@@ -54,7 +54,7 @@ int main(void) {
 void backtrack(int nodeNumber, int prevColor[]) {
   int counter;
   int prevNBlack = nBlack;
-  int color[nNodes];
+  int* color = (int*) malloc (nNodes * sizeof(int));
   for (counter = 0; counter < nNodes; counter++)
     color[counter] = prevColor[counter];
 
@@ -96,7 +96,7 @@ void backtrack(int nodeNumber, int prevColor[]) {
 
 int propagate (int nodeNumber, int color[]) {
   int success = 1;
-  int propagated[nodeNumber];
+  int* propagated = (int*) malloc (nodeNumber * sizeof(int));
   int nPropagated = 0;
   if (VR)
     printf("propagating for %d\n", nodeNumber);
