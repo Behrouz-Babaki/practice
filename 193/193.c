@@ -9,7 +9,7 @@ int nNodes;
 int best;
 int nBlack;
 
-int propagate (int nodeNumber, int color[]);
+void propagate (int nodeNumber, int color[]);
 void backtrack (int, int[]);
 void process_solution(int[]);
 
@@ -52,8 +52,8 @@ int main(void) {
 }
 
 void backtrack(int nodeNumber, int prevColor[]) {
+
   int counter;
-  int prevNBlack = nBlack;
   int* color = (int*) malloc (nNodes * sizeof(int));
   for (counter = 0; counter < nNodes; counter++)
     color[counter] = prevColor[counter];
@@ -63,72 +63,52 @@ void backtrack(int nodeNumber, int prevColor[]) {
   nBlack++;
 
   int found = 0;
-  if (propagate (nodeNumber, color)) {
-    for (counter = nodeNumber + 1; !found && counter < nNodes; counter++)
-      if (color[counter] < 0) {
-	nextNode = counter;
-	found = 1;
-      }
-    if (found)
-      backtrack(nextNode, color);
-    else 
-      process_solution(color);
-  }
-
-  nBlack = prevNBlack;
+  propagate (nodeNumber, color);
+  if (VR)
+    printf ("after prop: nBlack=%d best=%d\n", nBlack, best);
+  for (counter = nodeNumber + 1; !found && counter < nNodes; counter++)
+    if (color[counter] < 0) {
+      nextNode = counter;
+      found = 1;
+    }
+  if (found)
+    backtrack(nextNode, color);
+  else 
+    process_solution(color);
+  
+  /* white nodes do not need propagation */
+  nBlack--;
   for (counter = 0; counter < nNodes; counter++)
     color[counter] = prevColor[counter];
   color[nodeNumber] = 0;
+  found = 0;
+  for (counter = nodeNumber + 1; !found && counter < nNodes; counter++)
+    if (color[counter] < 0) {
+      nextNode = counter;
+      found = 1;
+    }
+  if (found)
+    backtrack(nextNode, color);
+  else 
+    process_solution(color);
 
-  if (propagate (nodeNumber, color)) {
-    found = 0;
-    for (counter = nodeNumber + 1; !found && counter < nNodes; counter++)
-      if (color[counter] < 0) {
-	nextNode = counter;
-	found = 1;
-      }
-    if (found)
-      backtrack(nextNode, color);
-    else 
-      process_solution(color);
-  }
+  free(color);
 }
 
-int propagate (int nodeNumber, int color[]) {
-  int success = 1;
-  int* propagated = (int*) malloc (nodeNumber * sizeof(int));
-  int nPropagated = 0;
+void propagate (int nodeNumber, int color[]) {
   if (VR)
     printf("propagating for %d\n", nodeNumber);
   int counter;
-  for (counter=0; success && counter < nNodes; counter++)
-    if (edges[nodeNumber][counter]) {
-      if (color[counter] >= 0) {
-	if (color[nodeNumber] == 1 && color[counter] == 1)
-	  success = 0;
-      }
-      else {
-	color[counter] = 1-color[nodeNumber];
-	propagated[nPropagated++] = counter;
-	if (VR)
-	  printf("setting %d to %d\n", counter, color[counter]);
-	if (color[counter])
-	  nBlack++;
-      }
-    }
-
-  for (counter = 0; success && counter < nPropagated; counter++)
-    success = propagate(propagated[counter], color);
-
-  return success;
+  for (counter=0; counter < nNodes; counter++)
+    if (edges[nodeNumber][counter] && color[counter] < 0) 
+      color[counter] = 0;
 }
 
 
 void process_solution(int color[]) {
   if (nBlack > best) {
     best = nBlack;
-    if (VR)
-      printf("best is now %d\n", best);
+    printf("best is now %d\n", best);
     int id = 0;
     int counter;
     for (counter=0; counter < nNodes; counter++)
