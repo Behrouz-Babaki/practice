@@ -25,6 +25,13 @@ int main(void) {
       scanf("%d %d", &nNodes, &nEdges);
       if (VR)
 	printf("nodes:%d edges:%d\n", nNodes, nEdges);
+
+      int counter;
+      int inner;
+      for (counter=0; counter < nNodes; counter++) 
+	for (inner = 0; inner < nNodes; inner++)
+	  edges[counter][inner] = 0;
+
       int edgeCounter;
       for (edgeCounter=0; edgeCounter < nEdges; edgeCounter++) {
 	int first, second;
@@ -34,10 +41,8 @@ int main(void) {
       }
 
       int color[500];
-      int counter;
       for (counter=0; counter < nNodes; counter++) 
 	color[counter] = -1;
-
       best = 0;
       nBlack = 0;
       backtrack(0, color);
@@ -108,7 +113,6 @@ void propagate (int nodeNumber, int color[]) {
 void process_solution(int color[]) {
   if (nBlack > best) {
     best = nBlack;
-    printf("best is now %d\n", best);
     int id = 0;
     int counter;
     for (counter=0; counter < nNodes; counter++)
