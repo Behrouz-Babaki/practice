@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #pragma GCC diagnostic ignored "-Wunused-result"
+#define VR 1
 
 int edges[100][100];
 int black[100];
@@ -11,6 +12,8 @@ int best;
 int nColored;
 
 void construct_candidates(int nodeNumber, int candidates[], int* nCandidates);
+void propagate (int nodeNumber, int propagated[], int* nPropagated);
+void undopropagation (int propagated[], int nPropagated);
 void backtrack (int);
 
 int main(void) {
@@ -46,12 +49,7 @@ int main(void) {
 }
 
 void backtrack(int nodeNumber) {
-  int candidates[nNodes];
-  int nCandidates;
   int counter;
-
-  if (colored[nodeNumber])
-    backtrack(nodeNumber+1);
 
   if (nodeNumber == nNodes) {
     if (nColored > best) {
@@ -64,40 +62,49 @@ void backtrack(int nodeNumber) {
     return;
   }
 
+  if (colored[nodeNumber])
+    backtrack(nodeNumber+1);
+
+
   colored[nodeNumber] = 1;
   black[nodeNumber] = 1;
   nColored++;
-  int neighbours[nNodes];
-  int nodeCounter;
-  int nbrCounter = 0;
-  for (nodeCounter = 0; nodeCounter < nNodes; nodeCounter++)
-    if (edges[nodeNumber][nodeCounter] && !colored[nodeCounter]){
-      colored[nodeCounter] = 1;
-      neighbours[nbrCounter++] = nodeCounter;
-    }
+  /*1 is black*/
+  int propagated[nNodes];
+  int nPropagated = 0;
+  propagate (nodeNumber, propagated, &nPropagated);
   backtrack(nodeNumber+1);
-  for (nodeCounter=0; nodeCounter < nbrCounter; nodeCounter++) 
-    colored[neighbours[nodeCounter]] = 0;
-  
-  black[nodeNumber] = 0;
+  undopropagation (propagated, nPropagated);
   nColored--;
 
-  for (nodeCounter = 0; nodeCounter < nNodes; nodeCounter++)
-    if (edges[nodeNumber][nodeCounter] && !colored[nodeCounter]){
-      colored[nodeCounter] = 1;
-      black[nodeCounter] = 1;
-      nColored++;
-      neighbours[nbrCounter++] = nodeCounter;
-    }
+  black[nodeNumber] = 0;
+  propagate (nodeNumber, propagated, &nPropagated);
   backtrack(nodeNumber+1);
-  for (nodeCounter=0; nodeCounter < nbrCounter; nodeCounter++) {
-    colored[neighbours[nodeCounter]] = 0;
-    black[neighbours[nodeCounter]] = 0;
-    nColored--;
-  }
-  
+  undopropagation (propagated, nPropagated);
   colored[nodeNumber] = 0;
 
 }
 
 
+void propagate (int nodeNumber, int propagated[], int* nPropagated) {
+  int counter;
+  for (counter=0; counter < nNodes; counter++)
+    if (edges[nodeNumber][counter] && !colored[counter]) {
+      black[counter] = 1-black[nodeNumber];
+      if (black[counter])
+	nColored++;
+      colored[counter] = 1;
+      propagated[*nPropagated] = counter;
+      (*nPropagated)++;
+      propagate (counter, propagated, nPropagated);
+    }
+}
+
+void undopropagation (int propagated[], int nPropagated) {
+  int counter;
+  for (counter = 0; counter < nPropagated; counter++) {
+    if (black[propagated[counter]])
+      nColored--;
+    colored[propagated[counter]] = 0;
+  }
+}
