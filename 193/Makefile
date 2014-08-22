@@ -1,10 +1,10 @@
-.PHONY : all doc clean test valgrind
+.PHONY : all doc clean test valgrind callgrind
 
 SHELL := /bin/bash
 MAINNAME = 193
 CXX = g++
 CC = gcc
-CFLAGS = -lm -lcrypt -O2 -pipe -ansi -DONLINE_JUDGE
+CFLAGS = -g -lm -lcrypt -O2 -pipe -ansi -DONLINE_JUDGE
 
 all : $(MAINNAME)
 
@@ -27,5 +27,8 @@ test:	$(MAINNAME)
 	@ echo 
 	@ diff <(cat $(OUTPUT)) <(cat $(INPUT) | ./$(MAINNAME)) || exit 0
 
-valgrind: $(MAINNAME)
+callgrind: $(MAINNAME)
 	@ valgrind --tool=callgrind --input-fd=3 ./$(MAINNAME) < $(INPUT) 3</dev/tty
+
+valgrind: $(MAINNAME)
+	@ valgrind  --input-fd=3 ./$(MAINNAME) < $(INPUT) 3</dev/tty
