@@ -12,3 +12,8 @@ I declared an array as `int x[num];' with `num' being a global
 variable. It compiled, but turned out that no memory is allocated to
 this array. For this either use constant for array size, or allocate
 on heap.
+
+* C: Initialize arrays
+In problem 193, I forgot to initialize global arrays, and that costed
+me half a day. I think only static variables are initialized to
+default values. Be on the safe side and always initialize.
