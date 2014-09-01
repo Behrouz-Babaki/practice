@@ -17,3 +17,10 @@ on heap.
 In problem 193, I forgot to initialize global arrays, and that costed
 me half a day. I think only static variables are initialized to
 default values. Be on the safe side and always initialize.
+
+* Consider the range of output (and intermediate data) In problem 153,
+I kept receiving wrong answer because I had used size_t to store
+factorial of a large number. This factorial was then divided by
+another factorial. The right way to do it was to compute the value of
+this division progressively, as otherwise the factorials themselves
+would not fit in any normal data type.
