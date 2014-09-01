@@ -2,35 +2,41 @@
 #include <cstdlib>
 #include <cstring>
 #include <map>
+#include <iostream>
 
 using std::map;
+using std::cout;
+using std::endl;
 
 size_t countPre(char*, size_t, size_t);
 size_t countPermutations (const map<char,size_t>&, char, char);
 size_t factorial(size_t);
 
 int main(void) {
+
+  size_t count;
   char str[31];
 
-  do {
-    scanf("%s", str);
-    size_t count;
+  scanf("%s", str);
+  while (str[0] != '#') {
     count = countPre(str, 0, strlen(str));
     printf("%10zd\n", count);
-  } while (str[0] != '#');
+    scanf("%s", str);
+  } 
 
   return 0;
 }
 
 size_t countPre (char* str, size_t start, size_t end) {
-  
+  // cout << "string:" << str << "\tstart:" << start << "\tend:" << end << endl;
+
   if (start == end-1)
     return 1;
   
   size_t count = 0;
   map <char, size_t> letterCounts;
   char first = str[start];
-  for (size_t counter = start + 1; counter < end; counter++)
+  for (size_t counter = start; counter < end; counter++)
     {
       char letter = str[counter];
       if (letterCounts.find(str[counter]) == letterCounts.end())
@@ -39,6 +45,12 @@ size_t countPre (char* str, size_t start, size_t end) {
 	// supicious
 	letterCounts[letter] ++;
     }
+  
+  // for (map<char,size_t>::iterator itr = letterCounts.begin(), endItr = letterCounts.end(); 
+  //      itr != endItr; itr++)
+  //   cout << "letter: " << itr->first << " count:" << itr->second << "\t";
+  // cout << endl;
+
   for (map<char,size_t>::iterator itr = letterCounts.begin(), endItr = letterCounts.end(); 
        (itr->first) < first && itr != endItr; itr++)
     count += countPermutations (letterCounts, first, itr->first);
