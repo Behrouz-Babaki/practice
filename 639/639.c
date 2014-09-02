@@ -2,16 +2,14 @@
 
 size_t max;
 size_t current;
+int board[4][4];
+size_t board_size;
 
-void print_board(int [4][4], size_t);
-void recurse (int board[4][4], size_t board_size, size_t row, size_t col);
-int safe (int board[4][4], size_t board_size, size_t row, size_t col);
-void next_cell (int board[4][4], size_t row, size_t col, size_t board_size);
+void recurse (size_t row, size_t col);
+int safe (size_t row, size_t col);
+void next_cell (size_t row, size_t col);
 
 int main(void) {
-
-  size_t board_size;
-  int board[4][4];
 
   scanf ("%zd\n", &board_size);
   while (board_size > 0) {
@@ -29,21 +27,22 @@ int main(void) {
     }
     max = 0;
     current = 0;
-    recurse (board, board_size, 0, 0);
+    recurse (0, 0);
     printf ("%zd\n", max);
     scanf ("%zd\n", &board_size);
   }
   return 0;
 }
 
-void recurse (int board[4][4], size_t board_size, size_t row, size_t col) {
+void recurse (size_t row, size_t col) {
   if (row == board_size) {
     if (current > max) 
       max = current;
+    /* printf ("returning\n"); */
     return;
   }
 
-  // If there is a wall, go to the next cell
+  /* If there is a wall, go to the next cell */
   if (board[row][col] == 2) 
     next_cell (board, row, col, board_size);
   else {
@@ -51,8 +50,10 @@ void recurse (int board[4][4], size_t board_size, size_t row, size_t col) {
     next_cell (board, row, col, board_size);
     
     if (safe (board, board_size, row, col)) {
-      board[row][col] = 1;
-      current++;
+      board[row][col] = 1; {
+	/* printf ("adding one in row:%zd col:%zd\n", row, col); */
+	current++;
+      }
       next_cell(board, row, col, board_size);
       board[row][col] = 0;
       current--;
@@ -103,7 +104,7 @@ int safe (int board[4][4], size_t board_size, size_t row, size_t col) {
 }
 
 void next_cell (int board[4][4], size_t row, size_t col, size_t board_size) {
-    if (col < board_size)
+    if (col+1 < board_size)
       recurse (board, board_size, row, col+1);
     else 
       recurse (board, board_size, row+1, 0);
