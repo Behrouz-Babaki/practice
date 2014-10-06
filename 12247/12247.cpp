@@ -66,20 +66,22 @@ int play(vector<int>& princess, vector<int>& prince) {
   int princess_card = -1;
   vector<int>::iterator princess_itr;
   for (vector<int>::iterator itr = princess.begin(), end_itr = princess.end(); princess_card < 0 && itr != end_itr; itr++)
-    if (*itr > prince.front())
+    if (*itr > prince.front()){
       princess_card = *itr;
+      princess_itr = itr;
+    }
   
   if (princess_card > 0) {
     princess.erase(princess_itr);
     bool found = false;
-  for (vector<int>::reverse_iterator itr = prince.rbegin(), end_itr = prince.rend(); !found && itr != end_itr; itr++)
-    if (*itr < princess_card){
-      found = true;
-      prince.erase(itr.base());
-    }
-  return 0;
+    for (size_t prince_card_cnt = prince.size() -1 ; !found && prince_card_cnt >= 0; prince_card_cnt --) 
+      if (prince[prince_card_cnt] < princess_card){
+	found = true;
+	prince.erase(prince.begin() + prince_card_cnt);
+      }
+      return 0;
   }
-
+    
   else {
     princess.erase(princess.begin());
     prince.erase(prince.end() - 1);
