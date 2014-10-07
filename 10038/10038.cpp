@@ -3,6 +3,7 @@
 #include <string>
 #include <sstream>
 #include <cstdlib>
+#include <vector>
 
 int main (void){
   std::string str;
@@ -17,9 +18,7 @@ int main (void){
     int length;
     ss >> length;
 
-    int * sequence = new int[length - 1];
-    for (int counter = 0; counter < length - 1; counter++)
-      sequence[counter] = 0;
+    std::vector<bool> sequence (length-1, false);
 
     int val;
     int prevVal;
@@ -28,24 +27,21 @@ int main (void){
 
     int diff = std::abs (prevVal - val);
       
-    for (int counter = 0; counter < length - 2; counter++){
-
-      if (diff >= length || sequence[diff] == 1){
+    for (int counter = 0; jolly && counter < length - 2; counter++)
+      if (diff >= length || diff == 0 || sequence[diff-1])
 	jolly = false;
-	break;
+      else {
+	sequence [diff-1] = true;
+	prevVal = val;
+	ss >> val;
+	diff = std::abs (prevVal - val);
       }
-      
-      sequence [diff] = 0;
-      prevVal = val;
-      ss >> val;
-      diff = std::abs (prevVal - val);
-    }
+    
 
-    if (diff >= length || sequence[diff] == 1)
-      jolly = false;
-
-    std::cout << jolly << std::endl;
-    delete sequence;
+    if (jolly)
+      std::cout << "Jolly" << std::endl;
+    else
+      std::cout << "Not jolly" << std::endl;
   }
   return 0;
 }
