@@ -1,10 +1,13 @@
 #include <iostream>
 #include <list> 
+#include <utility>
 
 using std::list;
 using std::cin;
 using std::cout;
 using std::endl;
+using std::pair;
+using std::make_pair;
 
 int main(void) {
 
@@ -12,54 +15,69 @@ int main(void) {
   cin >> num_soldiers >> num_reports;
 
   while (num_soldiers > 0 && num_reports > 0) {
-    list<size_t> soldiers (num_soldiers);
-    size_t soldier_cnt = 1;
+    list <pair<size_t,size_t> > blocks;
+    blocks.push_back(make_pair(1, num_soldiers));
+    for (size_t report_cnt = 0; report_cnt < num_reports; report_cnt++) {
+      size_t left, right;
+      cin >> left >> right;
+      
+      list<pair<size_t,size_t> >::iterator itr;
+      size_t containing_block;
+      size_t block_cnt, num_blocks;
+      bool found;
 
-    for (list<size_t>::iterator itr = soldiers.begin(), end_itr = soldiers.end();
-	 itr != end_itr; itr++, soldier_cnt++)
-      *itr = soldier_cnt;
-
-    size_t first, last, before_first, after_last;
-    for (size_t report_cnt = 0; report_cnt < num_reports; report_cnt++){
-      cin >> first >> last;
-      list<size_t>::iterator first_itr, last_itr;
-      bool found = false;
-      first_itr = soldiers.begin();
+      found = false;
+      itr = blocks.begin();
       while (!found)
-	if (*first_itr == first) {
+	if (left >= itr->first &&
+	    right <= itr->second)
 	  found = true;
-	}
 	else
-	  first_itr++;
+	  itr++;
+      
+      bool is_first, is_last;
+      is_first = false;
+      is_last = false;
+      size_t left_buddy, right_buddy;
 
-      if (first_itr == soldiers.begin())
-	before_first = 0;
+      if (left > itr->first) {
+	blocks.insert (itr, make_pair(itr->first, left-1));
+	left_buddy = left-1;
+      }
       else {
-	first_itr--;
-	before_first = *first_itr;
-	first_itr++;
+	if (itr == blocks.begin())
+	  is_first = true;
+	else {
+	  itr--;
+	  left_buddy = itr->second;
+	  itr++;
+	}
       }
 
-      bool finished = false;
-      last_itr = first_itr;
-      while(!finished){
-	if (*last_itr == last)
-	  finished = true;
-	last_itr = soldiers.erase(last_itr);
+      if (right < itr->second) {
+	blocks.insert (itr, make_pair(right+1, itr->second));
+	right_buddy = right + 1;
       }
+      else {
+	itr++;
+	if (itr == blocks.end())
+	  is_last = true;
+	else
+	  right_buddy = itr->first;
+	itr--;
+      }
+
+      blocks.erase(itr);
       
-      if (!before_first)
+      if (is_first)
 	cout << "*";
-      else
-	cout << before_first;
-      
+      else 
+	cout << left_buddy;
       cout << " ";
-
-      if (last_itr == soldiers.end())
+      if (is_last)
 	cout << "*";
       else
-	cout << *(last_itr++);
-
+	cout << right_buddy;
       cout << endl;
     }
     cout << "-" << endl;
