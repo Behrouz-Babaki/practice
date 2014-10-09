@@ -25,6 +25,7 @@ using std::make_pair;
 struct _team_ {
   size_t team_number;
   size_t num_solved;
+  vector<size_t> times;
   size_t time;
 };
 typedef struct _team_ team;
@@ -75,6 +76,8 @@ int main (void) {
 	current_team.team_number = contestant;
 	current_team.num_solved = 0;
 	current_team.time = 0;
+	vector<size_t> current_team_times (9, 0);
+	current_team.times = current_team_times;
 	team_map[contestant] = current_team;
       }
 
@@ -82,16 +85,23 @@ int main (void) {
 	if (correct) {
 	  has_solved.insert(make_pair(contestant, problem));
 	  team_map[contestant].num_solved ++;
-	  team_map[contestant].time += time;
+	  team_map[contestant].times [problem-1] += time;
 	}
 	else
-	  team_map[contestant].time += 20;
+	  team_map[contestant].times [problem-1] += 20;
       }
       getline(cin, line);
     }
     
-    for (auto current_team_pair : team_map)
-      team_queue.push(current_team_pair.second);
+    for (auto current_team_pair : team_map) {
+      team current_team = current_team_pair.second;
+      size_t total_time = 0;
+      for (size_t counter = 0; counter < 9; counter++)
+	if (has_solved.find(make_pair(current_team.team_number, counter+1)) != has_solved.end())
+	  total_time += current_team.times [counter];
+      current_team.time = total_time;
+      team_queue.push(current_team);
+    }
     
     while (!team_queue.empty()) {
       team current_team = team_queue.top();
@@ -100,7 +110,9 @@ int main (void) {
 	   << current_team.num_solved << " " 
 	   << current_team.time << endl;
     }
-    cout << endl;
+
+    if(case_cnt < number_of_cases - 1)
+      cout << endl;
   }
   return 0;
 }
