@@ -11,19 +11,17 @@ using std::stack;
 int main(void) {
   size_t N;
   cin >> N;
-  bool first_line = true;
   while (N != 0) {
-
-    if (!first_line)
-      cout << endl;
-    else
-      first_line = false;
-
     vector<size_t> numbers;
     numbers.reserve(N);
     size_t current_num;
     cin >> current_num;
     while (current_num > 0) {
+
+      stack<size_t> right_train;
+      for (size_t num_counter = N; num_counter > 0; num_counter--)
+	right_train.push(num_counter);
+      
       numbers.push_back(current_num);
       for (size_t num_counter = 1; num_counter < N; num_counter++){
 	cin >> current_num;
@@ -31,38 +29,29 @@ int main(void) {
       }
 
       size_t current_id = 0;
-      current_num = 1;
-      stack<size_t> temp;
-
       bool success = true;
       bool done = false;
+      stack<size_t> temp;
       while (!done) {
-	bool found = false;
-	while (!found && current_id < N){
-	  temp.push(numbers[current_id]);
-	  if (numbers[current_id++] == current_num) 
-	    found = true;
+	while (current_id < N && !temp.empty() && temp.top() == numbers[current_id]) {
+	  temp.pop();
+	  current_id ++;
 	}
-      
-	if (!found){
-	  success = false;
-	  done = true;
-	}
-	else {
-	  size_t next_num;
-	  while (!done && !temp.empty()){
-	    next_num = temp.top();
-	    temp.pop();
-	    if (next_num != current_num){
-	      success = false;
-	      done = true;
-	    }
-	    current_num++;
+	if (current_id < N) {
+	  while (!right_train.empty() && right_train.top() != numbers[current_id]) {
+	    temp.push(right_train.top());
+	    right_train.pop();
 	  }
-	  /* This is a hack. */
-	  if (current_num >= N)
-	    done = true;
+	if (!right_train.empty()) 
+	  right_train.pop();
+	else{
+	  done = true;
+	  success = false;
 	}
+	current_id++;
+	}
+	if (current_id == N)
+	  done = true;
       }
       if (success)
 	cout << "Yes" << endl;
@@ -72,6 +61,7 @@ int main(void) {
       numbers.clear();
       numbers.reserve(N);
     }
+    cout << endl;
     cin >> N;
   }
   return 0;
