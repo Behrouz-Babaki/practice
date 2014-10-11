@@ -13,10 +13,12 @@ int main(void) {
   cin >> N;
   bool first_line = true;
   while (N != 0) {
+
     if (!first_line)
       cout << endl;
     else
       first_line = false;
+
     vector<size_t> numbers;
     numbers.reserve(N);
     size_t current_num;
@@ -27,6 +29,7 @@ int main(void) {
 	cin >> current_num;
 	numbers.push_back(current_num);
       }
+
       size_t current_id = 0;
       current_num = 1;
       stack<size_t> temp;
@@ -36,11 +39,9 @@ int main(void) {
       while (!done) {
 	bool found = false;
 	while (!found && current_id < N){
-	  if (numbers[current_id] == current_num)
+	  temp.push(numbers[current_id]);
+	  if (numbers[current_id++] == current_num) 
 	    found = true;
-	  else
-	    temp.push(numbers[current_id]);
-	  current_id++;
 	}
       
 	if (!found){
@@ -58,6 +59,9 @@ int main(void) {
 	    }
 	    current_num++;
 	  }
+	  /* This is a hack. */
+	  if (current_num >= N)
+	    done = true;
 	}
       }
       if (success)
