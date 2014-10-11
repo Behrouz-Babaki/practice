@@ -24,3 +24,8 @@ factorial of a large number. This factorial was then divided by
 another factorial. The right way to do it was to compute the value of
 this division progressively, as otherwise the factorials themselves
 would not fit in any normal data type.
+
+* Data types may have different number of bits on other systems In
+problem 1A (codeforces), my code produced correct result on my system
+and wrong result on judge. It was only resolved when I changed 'long
+int' to 'long long int'.
