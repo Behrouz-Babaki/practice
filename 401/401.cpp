@@ -1,31 +1,37 @@
 #include <iostream>
 #include <string>
 #include <map>
-using namespace std;
+#include <utility>
+
+using std::map;
+using std::string;
+using std::endl;
+using std::cout;
+using std::cin;
+using std::getline;
+using std::pair;
+using std::make_pair;
 
 bool isPalindrome(const string&);
-bool isMirrored(const string& , const map<char,char>&);
+bool isMirrored(const string&);
+int checkSentence(const string&);
+map<char,char> reverses;
 
 int main (void){
 
    char letters[] = {'E' , 'J' , 'L' , 'S', 'Z' , '2' , '3' , '5'};
    char reverse[] = {'3' , 'L' , 'J' , '2' , '5' , 'S' , 'E' , 'Z'};
    char self[] = {'A' , 'H' , 'I' , 'M' , 'O' , 'T' , 'U' , 'V' , 'W', 'X' , 'Y' , '1' , '8'};
-
-   map<char,char> reverses;
-
    for (int counter = 0 ; counter < 8 ; counter++)
-      reverses.insert(pair<char,char>(letters[counter] , reverse[counter]));
+      reverses.insert(make_pair(letters[counter] , reverse[counter]));
    for (int counter = 0 ; counter < 13 ; counter++)
-      reverses.insert(pair<char,char>(self[counter] , self[counter]));
+      reverses.insert(make_pair(self[counter] , self[counter]));
 
-  
-  while (cin.good())
+   string str;
+   while (getline(cin, str))
   {
-    string str;
-    getline(cin,str);
     int result = checkSentence(str);
-    
+    cout << str;
     switch (result){
     case 0: 
       cout << " -- is not a palindrome." << endl;
@@ -41,16 +47,50 @@ int main (void){
       break;
     }
     cout << endl;
-
   }
   return 0;
 }
 
-
-bool isPalindrome(const string& givenStr){
-   return false;
+int checkSentence(const string& givenStr) {
+  bool palindrom = isPalindrome(givenStr);
+  bool mirrored = isMirrored(givenStr);
+  if (palindrom) {
+    if (mirrored) 
+      return 3;
+    else 
+      return 1;
+  }
+  else {
+    if (mirrored)
+      return 2;
+    else
+      return 0;
+  }
+  return -1;
 }
 
-bool isMirrored(const string& givenStr , const map<char,char>& reverses){
-   return false;
+
+bool isPalindrome(const string& givenStr){
+  bool palindrom = true;
+  for (size_t counter = 0, size = givenStr.length(); 
+       palindrom && counter < size/2; counter++)
+    if (givenStr.at(counter) != givenStr.at(size-1-counter))
+      palindrom = false;
+   return palindrom;
+}
+
+bool isMirrored(const string& givenStr){
+  bool mirrored = true;
+  for (size_t counter = 0, size = givenStr.length();
+       mirrored && counter < size/2; counter++) 
+    if (reverses.find(givenStr.at(counter)) == reverses.end() ||
+	givenStr.at(size-1-counter) != reverses[givenStr.at(counter)])
+      mirrored = false;
+
+  if (givenStr.length()%2 != 0) {
+    char middle = givenStr.at(givenStr.length()/2);
+    mirrored = mirrored && (reverses.find(middle) != reverses.end() &&
+  			   middle == reverses[middle]);
+  }
+   return mirrored;
 }
