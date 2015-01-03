@@ -1,9 +1,35 @@
-.PHONY: all
+.PHONY : all doc clean test valgrind callgrind
 
-all : 10038
+SHELL := /bin/bash
+MAINNAME = 10038
+CXX = g++
+CC = gcc
+CCFLAGS = -g -lm -lcrypt -O2 -pipe -ansi -DONLINE_JUDGE
+CXXFLAGS = -g -lm -lcrypt -O2 -std=c++0x -pipe -DONLINE_JUDGE
 
-10038 : 10038.o
-	g++ $< -o $@
+all : $(MAINNAME)
+
+$(MAINNAME) : $(MAINNAME).o
+	$(CXX) $(CXXFLAGS)  $< -o $@
 
 %.o : %.cpp
-	g++ -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c  $< -o $@ 
+
+clean:
+	@ rm -f *.o *~ core $(MAINNAME) callgrind.out.*
+
+INPUT = input
+OUTPUT = output
+test:	$(MAINNAME)
+	@ echo "input:"
+	@ cat $(INPUT)
+	@ echo "output:"
+	@ cat $(INPUT) | ./$(MAINNAME)
+	@ echo 
+	@ diff <(cat $(OUTPUT)) <(cat $(INPUT) | ./$(MAINNAME)) || exit 0
+
+callgrind: $(MAINNAME)
+	@ valgrind --tool=callgrind --input-fd=3 ./$(MAINNAME) < $(INPUT) 3</dev/tty
+
+valgrind: $(MAINNAME)
+	@ valgrind  --input-fd=3 ./$(MAINNAME) < $(INPUT) 3</dev/tty
