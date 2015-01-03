@@ -29,3 +29,13 @@ would not fit in any normal data type.
 problem 1A (codeforces), my code produced correct result on my system
 and wrong result on judge. It was only resolved when I changed 'long
 int' to 'long long int'.
+
+* When working on remote, make sure that you are also submitting from
+  remote. For a problem, I kept receiving WA because I was editing the
+  code on remote, but submitted the same code that I had on local
+  machine. Perhaps the best strategy is to clone the code repository
+  on the local and work directly on local.
+
+* size_t in loops In decrementing loops, if the counter is decremented
+down to zero, the counter type should be int (and not size_t), as
+otherwise the loop condition (counter >=0) will be always true.
