@@ -21,7 +21,7 @@ int main (void){
 
   for (int column = 0 ; column < maxLength ; column ++)
     {
-      for (int row = 0 ; row < strVec.size() ; row++)
+      for (int row = strVec.size() -1  ; row >= 0 ; row--)
 	if (strVec[row].length() > column)
 	  cout << strVec[row].at(column);
 	else
