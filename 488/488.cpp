@@ -36,16 +36,16 @@ void printWaveForm(int amplitude , int frequency){
     {
 
       for (int counter2 = 1 ; counter2 < amplitude ; counter2 ++){
-	for (int counter3 = 0 ; counter3 < counter2 ; counter3++)
-	  cout << counter3 + 1;
-	cout << endl;
+      	for (int counter3 = 0 ; counter3 < counter2 ; counter3++)
+      	  cout << counter2;
+      	cout << endl;
       }
       
 
       for (int counter2 = amplitude ; counter2 >= 1 ; counter2 --){
-	for (int counter3 = 0 ; counter3 < counter2 ; counter3++)
-	  cout << counter3 + 1;
-	cout << endl;
+      	for (int counter3 = 0 ; counter3 < counter2 ; counter3++)
+      	  cout << counter2;
+      	cout << endl;
       }
       
       if (counter < frequency - 1)
