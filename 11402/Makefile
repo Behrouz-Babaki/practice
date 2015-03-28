@@ -1,7 +1,7 @@
 .PHONY : all doc clean test valgrind callgrind
 
 SHELL := /bin/bash
-MAINNAME = 732
+MAINNAME = 11402
 CXX = g++
 CC = gcc
 CCFLAGS = -g -lm -lcrypt -O2 -pipe -ansi -DONLINE_JUDGE
