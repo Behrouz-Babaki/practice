@@ -4,9 +4,9 @@
 556
 12060
 12085
-10284
-11459
-161
+10284 <- accepted, but write a compact version later
+11459 <- accepted
+161   <- accepted
 403
 608
 1061
