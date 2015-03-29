@@ -1,5 +1,5 @@
 10114
-893
+893   <- accepted, but write a compact version later
 11947
 556
 12060
@@ -8,7 +8,7 @@
 11459 <- accepted
 161   <- accepted
 403
-608
+608   <- accepted
 1061
 11572
 1203
