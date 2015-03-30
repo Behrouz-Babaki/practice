@@ -9,7 +9,7 @@
 161   <- accepted
 403
 608   <- accepted
-1061
+1061  <- accepted, but too much reasoning-by-case
 11572
 1203
 599
