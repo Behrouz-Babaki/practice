@@ -41,6 +41,8 @@ int main(void) {
       }
       else if (!q.empty()) 
 	times += 2;
+      else 
+	times++;
     }
     cout << times << endl;
   }
