@@ -22,16 +22,16 @@ int main(void) {
     int high = mid + 1;
     int low = mid - 1;
     int n;
-    if ((2*k >= mid * (mid+1) * d) &&
-	(2*k < (mid+1)*(mid+2)*d))
-      n = mid;
-    else if ((2*k >= high * (high+1) * d) &&
-	     (2*k < (high+1)*(high+2)*d))
-      n = high;
-    else if ((2*k >= low * (low+1) * d) &&
-	     (2*k < (low+1)*(low+2)*d))
-      n = low;
-    //cout << n << endl;
+    if ((k > mid*(mid+1)*d/2) &&
+	(k <= (mid+1)*(mid+2)*d/2))
+      n = mid+1;
+    else if ((k > high*(high+1)*d/2) &&
+	     (k <= (high+1)*(high+2)*d/2))
+      n = high+1;
+    else if ((k > low*(low+1)*d/2) &&
+	     (k <= (low+1)*(low+2)*d/2))
+      n = low+1;
+    //cout << "n=" << n << endl;
     long result = 0;
     for (int counter = 0; counter <= degree; counter++)
       result += (coefs[counter] * pow(n, counter));
