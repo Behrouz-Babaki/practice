@@ -11,7 +11,7 @@
 608   <- accepted
 1061  <- accepted, but too much reasoning-by-case
 11572
-1203
+1203  <- +
 599
 793
 10507
@@ -23,7 +23,7 @@
 10920
 11581
 732   <- accepted
-1062
+1062  <- *
 10172 <- accepted
 10901 <- accepted
 11034 <- accepted
