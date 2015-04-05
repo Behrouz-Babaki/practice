@@ -20,41 +20,34 @@ int main(void) {
       for (int j = 0; j < size; j++)
 	cin >> grid[i][j];
     vector<int> alice(size);
-    for (int i = 0; i < size; i++)
+    vector<int> bob(size);
+    for (int i = 0; i < size; i++) {
       alice[i] = i;
+      bob[i] = i;
+    }
 
     int best_gain;
-    bool first = true;
+    bool first_alice = true;
     do {
-      vector<bool> selected(size, false);
-      int current_gain = 0;
-      
-      for (int alice_counter = 0; alice_counter < size; alice_counter++) {
-	int best_bob;
-	int best_bob_id;
-	bool first_bob = true;
-	for (int bob_counter = 0; bob_counter < size; bob_counter++)
-	  if (!selected[bob_counter]) {
-	    int val = grid[alice[alice_counter]][bob_counter];
-	    if (first_bob) {
-	      best_bob_id = bob_counter;
-	      best_bob = val;
-	      first_bob = false;
-	    }
-	    else if (val < best_bob) {
-	      best_bob_id = bob_counter;
-	      best_bob = val;
-	    }
+      bool first_bob = true;
+      int best_bob;
+      do {
+	int current_gain = 0;
+	for (int i = 0; i < size; i++) 
+	  current_gain += grid[alice[i]][bob[i]];
+	  if (first_bob) {
+	    first_bob = false;
+	    best_bob = current_gain;
 	  }
-	selected[best_bob_id] = true;
-	current_gain += grid[alice[alice_counter]][best_bob_id];
-	if (first) {
-	  best_gain = current_gain;
-	  first = false;
-	}
-	else if (current_gain > best_gain)
-	  best_gain = current_gain;
+	  else if (current_gain < best_bob) 
+	    best_bob = current_gain;
+      } while (next_permutation(bob.begin(), bob.end()));
+      if (first_alice) {
+	first_alice = false;
+	best_gain = best_bob;
       }
+      else if (best_bob > best_gain)
+	best_gain = best_bob;
       } while (next_permutation(alice.begin(), alice.end()));
       cout << best_gain << endl;
     }
