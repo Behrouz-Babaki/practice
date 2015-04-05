@@ -1,6 +1,7 @@
 #include <iostream>
 #include <utility>
 #include <vector>
+#include <cstdlib>
 
 using std::cin;
 using std::cout;
@@ -8,6 +9,7 @@ using std::endl;
 using std::pair;
 using std::make_pair;
 using std::vector;
+using std::abs;
 
 typedef pair<int,int> ii;
 typedef pair<ii, int> iii;
@@ -15,11 +17,13 @@ typedef pair<ii, int> iii;
 class centers{
 public:
   centers(int c1, int c2, int c3, int c4, int c5) {
-    cnt1 = c1, cnt2 = c2, cnt3 = c3, cnt4 = c4, cnt5 = c5;
+    cnts[0] = c1, cnts[1] = c2, cnts[2] = c3, cnts[3] = c4, cnts[4] = c5;
   }
-  int cnt1, cnt2, cnt3, cnt4, cnt5;
+  int cnts[5];
   void print() {
-    cout << cnt1 << " " << cnt2 << " " << cnt3 << " " << cnt4 << " " << cnt5 << endl;
+    for (int counter =  0; counter < 4; counter++)
+      cout << cnts[counter] << " ";
+    cout << cnts[4] << endl;
   }
   
 };
@@ -40,10 +44,9 @@ int main(void) {
       iii reg = make_pair(make_pair(row,col), pop);
       regs.push_back(reg);
     }
-    vector<centers> cs;
-    centers first_centers(0,1,2,3,4);
-    int total = get_total(first_centers, regs);
-    cs.push_back(first_centers);
+
+    centers best_centers(0,1,2,3,4);
+    int min_total = get_total(best_centers, regs);
     
     for (int cnt1 = 0; cnt1 < 25; cnt1++)
       for (int cnt2 = cnt1+1; cnt2 < 25; cnt2++)
@@ -52,21 +55,38 @@ int main(void) {
 	    for (int cnt5 = cnt4+1; cnt5 < 25; cnt5++){
 	      centers current_centers(cnt1, cnt2, cnt3, cnt4, cnt5);
 	      int current_total = get_total(current_centers, regs);
-		if (current_total < total){
-		  cs.clear();
-		  cs.push_back(current_centers);
-		}
-		else if (current_total == total)
-		  cs.push_back(current_centers);
-		  
+	      if (current_total < min_total){
+		  best_centers = current_centers;
+		  min_total = current_total;
+	      }
 	    }
-    for (auto c : cs)
-      c.print();
+    //cout << "min_total:" << min_total << endl;
+    best_centers.print();
 	      
   }
   return 0;
 }
 
 int get_total(const centers& cnt, const vector<iii> regs) {
-  return 0;
+  int total = 0;
+  for (auto reg : regs) {
+    int row = reg.first.first;
+    int col = reg.first.second;
+    int pop = reg.second;
+    
+    int min = abs(row-cnt.cnts[0]/5) + 
+      abs(col-cnt.cnts[0]%5);
+    int id = 0;
+    for (int i = 1; i < 5; i++) {
+      int r = cnt.cnts[i]/5;
+      int c = cnt.cnts[i]%5;
+      int dist = abs(row-r) + abs(col-c);
+      if ( dist < min) {
+	id = i;
+	min = dist;
+      }
+    }
+    total += min*pop;
+  }
+  return total;
 }
