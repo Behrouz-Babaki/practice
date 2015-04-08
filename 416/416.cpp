@@ -53,10 +53,10 @@ int main(void) {
     }
     
     bool matched = false;
-    for (int i=num_lines-1; !matched && i<9; i++) {
+    for (int i=num_lines-1; !matched && i<=9; i++) {
       set<int> faulty;
       if (match(i, input[0], faulty))
-	if (search(1, i+1, faulty)) 
+	if (search(1, i-1, faulty)) 
 	  matched = true;
     }
 
@@ -88,7 +88,9 @@ bool search(int loc, int number, set<int> faulty) {
   set<int> next_fault = faulty;
   bool matchable = true;
   for (int i=0; matchable && i<7; i++) {
-    if (input[loc][i] && !led[number][i])
+    if (input[loc][i] && faulty.find(i) != faulty.end())
+      matchable = false;
+    else if (input[loc][i] && !led[number][i])
       matchable = false;
     else if (!input[loc][i] && led[number][i])
       next_fault.insert(i);
@@ -96,5 +98,5 @@ bool search(int loc, int number, set<int> faulty) {
   if (!matchable)
     return false;
   else 
-    return search(loc+1, number+1, next_fault);
+    return search(loc+1, number-1, next_fault);
 }
