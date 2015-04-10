@@ -31,6 +31,7 @@ int main(void) {
   string line;
   while(getline(cin, line)){
     conset constraints;
+    bool unsat = false;
     while (line.front()!='.') {
       int id=0;
       map<int,bool> cons;
@@ -38,6 +39,9 @@ int main(void) {
 	cons[line[id+1]-'A'] = (line[id]=='+') ? true : false;
 	id += 2;
       }
+      if (cons.empty())
+	unsat = true;
+
       constraints.push_back(cons);
       getline(cin,line);
     }
@@ -48,7 +52,7 @@ int main(void) {
     }
 
     vector<int> sol(16, -1);
-    if (!search(constraints, active, 0, sol)) 
+    if (unsat || !search(constraints, active, 0, sol)) 
       cout << "No pizza can satisfy these requests." << endl;
   }
   return 0;
