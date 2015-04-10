@@ -15,9 +15,10 @@ using std::set;
 
 typedef map<int,bool> constraint;
 typedef vector<constraint> conset;
+bool verbose = false;
 
-bool search(conset conss, int loc, vector<int>& sol);
-void print_conss(conset cns);
+bool search(conset conss, vector<bool> active, int loc, vector<int>& sol);
+void print_conss(conset cns, vector<bool> active);
 
 int main(void) {
   string line;
@@ -33,8 +34,14 @@ int main(void) {
       constraints.push_back(cons);
       getline(cin,line);
     }
+    vector<bool> active(constraints.size(), true);
+    if (verbose) {
+      cout << "original constraints:" << endl;
+      print_conss(constraints, active);
+    }
+
     vector<int> sol(16, -1);
-    if (search(constraints, 0, sol)) {
+    if (search(constraints, active, 0, sol)) {
       cout << "Toppings: ";
       for (int i=0; i<16; i++)
 	if (sol[i] == 1)
@@ -50,72 +57,61 @@ int main(void) {
 }
 
 
-bool search(conset conss, int loc, vector<int>& sol) {
+bool search(conset conss, vector<bool> active, int loc, vector<int>& sol) {
   if (loc == 16)
     return true;
+  bool all_gone = true;
+  for (int i=0; all_gone && i<active.size(); i++)
+    if (active[i])
+      all_gone = false;
+  if (all_gone)
+    return true;
   if (sol[loc] >= 0)
-    return search(conss, loc+1, sol);
-  bool possible;
-  //option1: sol[loc]=true
-  possible = true;
-  for (conset::iterator itr = conss.begin(), end = conss.end();
-       possible && itr!=end; itr++)
-    if (itr->size()==1 && 
-	itr->find(loc)!=itr->end() &&
-	!(itr->find(loc)->second))
-      possible = false;
-  if (possible) {
-    sol[loc] = true;
-    conset conss_new = conss;
-    for (conset::iterator itr = conss_new.begin(), end = conss_new.end();
-	 itr!=end; itr++) {
-      if (itr->find(loc)!=itr->end())
-	if (itr->find(loc)->second)
-	  conss_new.erase(itr);
-	else
-	  itr->erase(itr->find(loc));
-    }
-    if (search(conss_new, loc+1, sol))
-      return true;
-  }
-  //TODO do this in a loop instead of copying
-  //option1: sol[loc]=false
-  possible = true;
-  for (conset::iterator itr = conss.begin(), end = conss.end();
-       possible && itr!=end; itr++)
-    if (itr->size()==1 && 
-	itr->find(loc)!=itr->end() &&
-	itr->find(loc)->second)
-      possible = false;
-  if (possible) {
-    sol[loc] = false;
-    conset conss_new = conss;
-    for (conset::iterator itr = conss_new.begin(), end = conss_new.end();
-	 itr!=end; itr++) {
-      if (itr->find(loc)!=itr->end())
-	if (!(itr->find(loc)->second))
-	  conss_new.erase(itr);
-	else
-	  itr->erase(itr->find(loc));
-    }
-    if (search(conss_new, loc+1, sol))
-      return true;
-  }
+    return search(conss, active, loc+1, sol);
 
+  bool option = true;
+  for (int cnt=0; cnt<2; cnt++, option!=option) {
+    bool possible = true;
+    for (int i=0; possible && i<conss.size(); i++)
+      if (conss[i].size()==1 && 
+	  conss[i].find(loc)!=conss[i].end() &&
+	  (conss[i].find(loc)->second) != option)
+	possible = false;
+    if (possible) {
+      if (verbose)
+	cout << "making " << loc << (option ? " true" : " false") << "." << endl;
+      sol[loc] = option;
+      conset conss_new = conss;
+      for (int i = 0; i < conss_new.size(); i++)
+	if (active[i] && conss_new[i].find(loc)!=conss_new[i].end())
+	  if (conss_new[i].find(loc)->second == option)
+	    active[i] = false;
+	  else
+	    conss_new[i].erase(conss_new[i].find(loc));
+      if (verbose)
+	print_conss(conss_new, active);
+      if (search(conss_new, active, loc+1, sol))
+	return true;
+    }
+  }
+  if (verbose)
+    cout << "didn't work out for " << loc << endl;
   sol[loc] = -1;
   return false;
 }
 
-void print_conss(conset cns){
-  for (auto c : cns) {
-    for (int i=0; i<16; i++)
-      if (c.find(i)!=c.end()){
-	if (c[i])
-	  cout << "+";
-	else
-	  cout << "-";
-	cout << (char)('A'+i);
-      }
-    cout << endl;
-  }
+void print_conss(conset cns, vector<bool> active){
+  for (int cnt = 0; cnt < cns.size(); cnt++)
+    if (active[cnt]) {
+      for (int i=0; i<16; i++)
+	if (cns[cnt].find(i)!=cns[cnt].end()){
+	  if (cns[cnt][i])
+	    cout << "+";
+	  else
+	    cout << "-";
+	  cout << (char)('A'+i);
+	}
+      cout << endl;
+    }
 }
+
