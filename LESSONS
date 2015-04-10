@@ -39,3 +39,9 @@ int' to 'long long int'.
 * size_t in loops In decrementing loops, if the counter is decremented
 down to zero, the counter type should be int (and not size_t), as
 otherwise the loop condition (counter >=0) will be always true.
+
+* Do not use arbitrary syntax for challenging problems. In 565(sat
+  solving) I had a lot of trouble only because of using
+  (option!=option) instead of (option=!option) in a loop. Once you've
+  used such syntax, it is very hard to find it. So avoid it altogether
+  for harder problems.
