@@ -3,6 +3,7 @@
 #include <vector>
 #include <map>
 #include <set>
+#include <utility>
 
 using std::cin;
 using std::cout;
@@ -12,6 +13,8 @@ using std::vector;
 using std::getline;
 using std::map;
 using std::set;
+using std::pair;
+using std::make_pair;
 
 typedef map<int,bool> constraint;
 typedef vector<constraint> conset;
@@ -19,6 +22,10 @@ bool verbose = false;
 
 bool search(conset conss, vector<bool> active, int loc, vector<int>& sol);
 void print_conss(conset cns, vector<bool> active);
+bool check_possible(const conset& conss, const vector<bool>& active, int loc, bool option);
+void make_option(conset& conss, vector<bool>& active, int loc, bool option);
+pair<int,bool> find_unit(const conset& conss, const vector<bool>& active);
+void print_topping(const vector<int>& sol);
 
 int main(void) {
   string line;
@@ -41,62 +48,68 @@ int main(void) {
     }
 
     vector<int> sol(16, -1);
-    if (search(constraints, active, 0, sol)) {
-      cout << "Toppings: ";
-      for (int i=0; i<16; i++)
-	if (sol[i] == 1)
-	  cout << (char)('A'+i);
-      cout << endl;
-    }
-    else
+    if (!search(constraints, active, 0, sol)) 
       cout << "No pizza can satisfy these requests." << endl;
   }
-    
-  cout << endl;
   return 0;
 }
 
 
 bool search(conset conss, vector<bool> active, int loc, vector<int>& sol) {
-  if (loc == 16)
+  if (loc == 16) {
+    print_topping(sol);
     return true;
+  }
+
   bool all_gone = true;
   for (int i=0; all_gone && i<active.size(); i++)
     if (active[i])
       all_gone = false;
-  if (all_gone)
+  if (all_gone) {
+    print_topping(sol);
     return true;
+  }
+
   if (sol[loc] >= 0)
     return search(conss, active, loc+1, sol);
 
-  bool option = true;
+  bool option = false;
   for (int cnt=0; cnt<2; cnt++, option!=option) {
-    bool possible = true;
-    for (int i=0; possible && i<conss.size(); i++)
-      if (conss[i].size()==1 && 
-	  conss[i].find(loc)!=conss[i].end() &&
-	  (conss[i].find(loc)->second) != option)
-	possible = false;
-    if (possible) {
+    if (check_possible(conss, active, loc, option)) {
       if (verbose)
-	cout << "making " << loc << (option ? " true" : " false") << "." << endl;
-      sol[loc] = option;
+	cout << "making " << loc << "=" << sol[loc] << " " << (option ? " true" : " false") << "." << endl;
+
       conset conss_new = conss;
-      for (int i = 0; i < conss_new.size(); i++)
-	if (active[i] && conss_new[i].find(loc)!=conss_new[i].end())
-	  if (conss_new[i].find(loc)->second == option)
-	    active[i] = false;
-	  else
-	    conss_new[i].erase(conss_new[i].find(loc));
+      vector<bool> active_new = active;
+      vector<int> sol_new = sol;
+
+      sol_new[loc] = option;
+      make_option(conss_new, active_new, loc, option);
+
+      // unit resolution here
+      bool unit_ok = true;
+      pair<int,bool> unit = find_unit(conss_new, active_new);
+      while (unit_ok && unit.first > 0) {
+	if (!check_possible(conss_new, active_new, unit.first, unit.second)) {
+	  if (verbose)
+	    cout << "unit resolution failed" << endl;
+	  unit_ok = false;
+	}
+	else {
+	  sol_new[unit.first] = (int) unit.second;
+	  make_option(conss_new, active_new, unit.first, unit.second);
+	  unit = find_unit(conss_new, active_new);
+	}
+      }
+
       if (verbose)
-	print_conss(conss_new, active);
-      if (search(conss_new, active, loc+1, sol))
+	print_conss(conss_new, active_new);
+      if (unit_ok && search(conss_new, active_new, loc+1, sol_new))
 	return true;
     }
   }
   if (verbose)
     cout << "didn't work out for " << loc << endl;
-  sol[loc] = -1;
   return false;
 }
 
@@ -115,3 +128,41 @@ void print_conss(conset cns, vector<bool> active){
     }
 }
 
+bool check_possible(const conset& conss, const vector<bool>& active, int loc, bool option) {
+    bool possible = true;
+    for (int i=0; possible && i<conss.size(); i++)
+      if (active[i] &&
+	  conss[i].size()==1 && 
+	  conss[i].find(loc)!=conss[i].end() &&
+	  (conss[i].find(loc)->second) != option)
+	possible = false;
+    return possible;
+}
+
+void make_option(conset& conss, vector<bool>& active, int loc, bool option) {
+      for (int i = 0; i < conss.size(); i++)
+	if (active[i] && conss[i].find(loc)!=conss[i].end())
+	  if (conss[i].find(loc)->second == option)
+	    active[i] = false;
+	  else
+	    conss[i].erase(conss[i].find(loc));
+}
+
+pair<int,bool> find_unit(const conset& conss, const vector<bool>& active){
+  bool found = false;
+  pair<int,bool> result = make_pair(-1,false);
+  for (int i=0; !found && i<conss.size(); i++)
+    if (active[i] && conss[i].size()==1) {
+      result = make_pair(conss[i].begin()->first, conss[i].begin()->second);
+      found = true;
+    }
+  return result;
+}
+
+void print_topping(const vector<int>& sol){
+    cout << "Toppings: ";
+    for (int i=0; i<16; i++)
+      if (sol[i] == 1)
+	cout << (char)('A'+i);
+    cout << endl;
+}
