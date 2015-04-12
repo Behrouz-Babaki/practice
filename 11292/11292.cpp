@@ -15,7 +15,7 @@ int main(void){
     vector<int> heads(n_heads);
     vector<int> knights(n_knights);
     for (int i=0; i<n_heads; i++)
-      cin >> heads[n_heads];
+      cin >> heads[i];
     for (int i=0; i<n_knights; i++)
       cin >> knights[i];
     sort(heads.begin(), heads.end());
