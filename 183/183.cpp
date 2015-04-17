@@ -20,42 +20,44 @@ int rows, columns;
 vector<vector<bool> > table;
 string output;
 
-void b2d(string& line);
-void d2b(string& line);
+void b2d(void);
+void d2b(void);
 void print_d(int rbegin, int rend, int cbegin, int cend);
 pair<bool,bool> all(int rbegin, int rend, int cbegin, int cend);
-int fill(string& line, int loc, int rbegin, int rend, int cbegin, int cend);
+void fill(int rbegin, int rend, int cbegin, int cend);
+void print_output(void);
 
 int main(void) {
   char format;
-  cin >> format;
+  cin >> ws >> format;
   while (format!='#') {
     cin >> rows >> columns >> ws;
+    string line;
     output.clear();
     table.clear();
     table.resize(rows, vector<bool>(columns));
-    string line;
-    getline(cin, line);
     if (format=='B') {
-      b2d(line);
       cout << 'D' << setw(4) << right << rows << setw(4) << columns << endl; 
-      cout << setw(50) << left << output << endl;
+	b2d();
+	print_output();
     }
     else {
-      d2b(line);
       cout << 'B' << setw(4) << right << rows << setw(4) << columns << endl;
-      cout << setw(50) << left << output << endl;
+	d2b();
+	print_output();
     }
-    cin >> format;
+    cin >> ws >> format;
   }
   return 0;
 }
 
-void b2d(string& line) {
-  int idx = 0;
+void b2d(void) {
   for (int i=0; i<rows; i++)
-    for (int j=0; j<columns; j++)
-      table[i][j] = (line[idx++] == '1');
+    for (int j=0; j<columns; j++) {
+      char ch;
+      cin >> ws >> ch;
+      table[i][j] = (ch == '1');
+    }
   print_d(0, rows-1, 0, columns-1);
 }
 
@@ -90,8 +92,8 @@ pair<bool,bool> all(int rbegin, int rend, int cbegin, int cend){
   return make_pair(one, zero);
 }
 
-void d2b(string& line){
-  fill(line, 0, 0, rows-1, 0, columns-1);
+void d2b(void){
+  fill(0, rows-1, 0, columns-1);
   for (int i=0; i<rows; i++){
     for (int j=0; j<columns; j++){
       char ch = table[i][j] ? '1':'0';
@@ -100,27 +102,34 @@ void d2b(string& line){
   }
 }
 
-int fill(string& line, int loc, int rbegin, int rend, int cbegin, int cend){
+void fill(int rbegin, int rend, int cbegin, int cend){
   if (rend<rbegin || cend<cbegin)
-    return loc;
-
-  if(line[loc] == '0' || line[loc] == '1') {
+    return;
+  char ch;
+  cin >> ws >> ch;
+  if(ch== '0' || ch == '1') {
     for (int i=rbegin; i<=rend; i++)
       for (int j=cbegin; j<=cend; j++)
-	table[i][j] = (line[loc] == '1');
-    return loc+1;
+	table[i][j] = (ch == '1');
+    return;
   }
 
   int rmid = (rbegin+rend)/2;
   int cmid = (cbegin+cend)/2;
-  loc = fill(line, loc+1,  rbegin, rmid, cbegin, cmid);
-  loc = fill(line, loc, rbegin, rmid, cmid+1, cend);
-  loc = fill(line, loc, rmid+1, rend, cbegin, cmid);
-  loc = fill(line, loc, rmid+1, rend, cmid+1, cend);
-  return loc;
+  fill(rbegin, rmid, cbegin, cmid);
+  fill(rbegin, rmid, cmid+1, cend);
+  fill(rmid+1, rend, cbegin, cmid);
+  fill(rmid+1, rend, cmid+1, cend);
+  return;
 }
 
-/*
-  cout << 'D' << setw(4) << right << 3 << setw(4) << 4 << endl;
-  cout << setw(50) << left << "D0D1001D101" << endl;
-*/
+void print_output(void){
+  int i=0;
+  for (; i<output.length(); i++) {
+    cout <<output[i];
+    if ((i+1)%50==0 && i<(output.length()-1))
+      cout << endl;
+  }
+  cout << endl;
+}
+
