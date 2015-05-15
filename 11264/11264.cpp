@@ -20,12 +20,15 @@ int main(void) {
       cin >> coins[coin_cnt];
 
     long int sum = 0;
-    int num = 0;
-    for (int coin_cnt=0; coin_cnt<num_types; coin_cnt++)
-      if (coins[coin_cnt] > sum){
+    int id = 0, num=0;
+    while (id < coins.size()){
+      if (id+1 == coins.size() ||
+	  sum + coins[id] < coins[id+1]) {
 	num++;
-	sum += coins[coin_cnt];
+	sum += coins[id];
       }
+      id++;
+    }
     cout << num << endl;
   }
   return 0;
