@@ -18,35 +18,31 @@ int main(void) {
     int D, M;
     for (int q_cnt = 0; q_cnt < Q; q_cnt++) {
       cin >> D >> M;
-      vector<vector<vector<int> > > memo(N, vector<vector<int> > (M, vector<int> (D)));
+      vector<vector<vector<int> > > memo(N+1, vector<vector<int> > (M+1, vector<int> (D,0)));
+
+      // init for i=N
+      for (int j=0; j<=M; j++)
+	for (int k=0; k<D; k++)
+	  memo[N][j][k] = 0;
 
       // init for j=0
-      for (int i=0; i<N; i++) {
-	int id; 
-	if (numbers[i] > 0)
-	  id = numbers[i]%D;
-	else
-	  id = numbers[i]%D + D;
-	for (int k=0; k<D; k++)
-	  if (k==id)
-	    memo[i][0][k] = 1;
-	  else
-	    memo[i][0][k] = 0;
-      }
-	
-      for (int i = 1; i < N; i++)
-	for (int j = 1; j < M; j++)
+      for (int i=0; i<=N; i++) 
+	    memo[i][0][0] = 1;
+
+      for (int i = N-1; i>=0; i--)
+	for (int j = 1; j <= M; j++)
 	  for (int k = 0; k < D; k++) {
 	    //compute memo[i][j][k] here
-	    memo[i][j][k] = memo[i-1][j][k];
-	    int id; 
-	    if (numbers[i] > 0)
-	      id = numbers[i]%D;
-	    else
-	      id = numbers[i]%D + D;
-	    memo[i][j][k] += memo[i-1][j-1][id];
+	    memo[i][j][k] = memo[i+1][j][k];
+	    int rem = numbers[i]%D;
+	    if (rem < 0)
+	      rem += D;
+	    int id = k - (rem);
+	    if (id < 0)
+	      id += D;
+	    memo[i][j][k] += memo[i+1][j-1][id];
 	  }
-      cout << "QUERY " << q_cnt+1 << ": " << memo[0][M-1][0] << endl;
+      cout << "QUERY " << q_cnt+1 << ": " << memo[0][M][0] << endl;
     }
     cin >> N >> Q;
   }
