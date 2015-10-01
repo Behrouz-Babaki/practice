@@ -1,10 +1,15 @@
 #include <iostream>
 #include <vector>
+#include <set>
+#include <utility>
 
 using std::endl;
 using std::cin;
 using std::cout;
 using std::vector;
+using std::set;
+using std::pair;
+using std::make_pair;
 
 vector<vector<int> > visited;
 vector<vector<int> > accessible;
@@ -42,33 +47,33 @@ int main(void) {
 }
 
 void dfs(int r, int c) {
-  int cnt = 0;
   visited[r][c] = 1;
+  set<pair<int,int> > neighbours;
   for (int rr=-1; rr<=1; rr+=2)
     for(int cc=-1; cc<=1; cc+=2) {
-      int row = r+rr*N;
-      int col = c+cc*M;
+      int row = r+rr*M;
+      int col = c+cc*N;
       if (row >=0 && row < R &&
 	  col >=0 && col < C && 
 	  accessible[row][col]){
-	cnt++;
+	neighbours.insert(make_pair(row, col));
 	if(!visited[row][col]) 
 	  dfs(row,col);
       }
 
       if (M!=N) {
-	row = r+rr*M;
-	col = c+cc*N;
+	row = r+rr*N;
+	col = c+cc*M;
 	if (row >=0 && row < R &&
 	    col >=0 && col < C && 
 	    accessible[row][col]){
-	  cnt++;
+	  neighbours.insert(make_pair(row, col));
 	  if(!visited[row][col])
 	    dfs(row,col);
 	}
       }
     }
-  if (cnt%2)
+  if (neighbours.size()%2)
     odds++;
   else
     evens++;
