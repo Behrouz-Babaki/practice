@@ -35,12 +35,8 @@ int main(void) {
     }
 
     for (int node_cnt =0; node_cnt < N; node_cnt++) 
-      if (!reach_count[node_cnt]) {
-	if (!reach_count[next[node_cnt]]) 
+      if (!reach_count[node_cnt]) 
 	  dfs(node_cnt);
-	else
-	  reach_count[node_cnt] = reach_count[next[node_cnt]] + 1;
-      }
 
     int best_node = -1;
     int best_count = -1;
@@ -50,33 +46,34 @@ int main(void) {
 	best_count = reach_count[cnt];
       }
     
-    // for (auto r : reach_count)
-    //   cout << r << "\t";
-    // cout << endl;
     cout << "Case " << case_cnt << ": " << best_node + 1 << endl;
   }
   return 0;
 }
 
 void dfs(int node) {
+  if (reach_count[next[node]]) {
+    reach_count[node] = reach_count[next[node]] + 1;
+    return;
+  }
+    
   visited[node] = 1;
   int next_node = next[node];
   if (!visited[next_node]) {
     dfs(next_node);
-    if (!in_loop[node])
+    if (!in_loop[node]) 
       reach_count[node] = reach_count[next_node] + 1;
   }
 
   // When there is a loop
   else {
-    // cout << "loop detected at " << node << endl;
-    int cnt = 0;
+    int cnt = 1;
     in_loop[node] = 1;
     int current_node = next[node];
     while (current_node != node) {
+      in_loop[current_node] = 1;
       cnt++;
       current_node = next[current_node];
-      in_loop[current_node] = 1;
     }
 
     reach_count[node] = cnt;
@@ -87,6 +84,7 @@ void dfs(int node) {
 	current_node = next[current_node];
       }
   }
+  visited[node] = 0;
 }
 
 
