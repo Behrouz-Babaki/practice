@@ -13,29 +13,20 @@ using std::map;
 using std::string;
 using std::stringstream;
 
-vector<vector<int> > graph;
-vector<int> visited;
-vector<int> order;
-
-void dfs(int);
-
 int main(void) {
   int num_beverages;
   int case_cnt = 1;
   while (cin >> num_beverages) {
-    graph.clear();
+    vector<vector<int> > graph;
     graph.resize(num_beverages);
-    visited.clear();
-    visited.resize(num_beverages, 0);
-    order.clear();
     
-    map<string, int> b_names;
-    vector<string> b_ids(num_beverages);
+    map<string, int> b_ids;
+    vector<string> b_names(num_beverages);
     for (int b_cnt=0; b_cnt<num_beverages; b_cnt++) {
       string name;
       cin >> name;
-      b_names[name] = b_cnt;
-      b_ids[b_cnt] = name;
+      b_ids[name] = b_cnt;
+      b_names[b_cnt] = name;
     }
 
     int num_edges;
@@ -44,18 +35,33 @@ int main(void) {
       string first, second;
       cin >> first >> second;
       int first_node, second_node;
-      first_node = b_names[first];
-      second_node = b_names[second];
+      first_node = b_ids[first];
+      second_node = b_ids[second];
       graph[first_node].push_back(second_node);
     }
     
+    vector<int> in_edges(num_beverages, 0);
     for (int node_cnt=0; node_cnt<num_beverages; node_cnt++)
-      if (!visited[node_cnt])
-	dfs(node_cnt);
+      for (auto second : graph[node_cnt])
+	in_edges[second]++;
+
+    vector<int> sorted(num_beverages, 0);
+    int sort_id = 0;
+    vector<int> visited(num_beverages, 0);
+    while (sort_id < num_beverages) {
+      int remove_id = 0;
+      while(in_edges[remove_id] || visited[remove_id])
+	remove_id++;
+      sorted[sort_id++] = remove_id;
+      visited[remove_id] = 1;
+      for (auto second : graph[remove_id])
+	in_edges[second]--;
+    }
+    
 
     cout << "Case #" << case_cnt << ": Dilbert should drink beverages in this order:";
-    for (int node_cnt=order.size()-1; node_cnt>=0; node_cnt--)
-      cout << " " << b_ids[order[node_cnt]];
+    for (auto node_cnt : sorted)
+      cout << " " << b_names[node_cnt];
     cout <<  "." << endl << endl;
     
     case_cnt++;
@@ -63,10 +69,3 @@ int main(void) {
   return 0;
 }
 
-void dfs(int node) {
-  visited[node] = 1;
-  for (auto next : graph[node])
-    if (!visited[next])
-      dfs(next);
-  order.push_back(node);
-}
