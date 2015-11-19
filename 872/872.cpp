@@ -18,9 +18,15 @@ using std::sort;
 
 map<char,int> var_to_num;
 vector<char> vars;
+vector<char> old_vars;
 vector<vector<int> > graph;
 vector<int> in_degree;
-vector<int> order;
+vector<bool> visited;
+vector<char> order;
+bool found;
+
+void print(int position,
+	   vector<int> in_degree);
 
 int main(void) {
   int num_cases;
@@ -28,10 +34,12 @@ int main(void) {
   while (num_cases--) {
 
     var_to_num.clear();
+    old_vars.clear();
     vars.clear();
     graph.clear();
     in_degree.clear();
     order.clear();
+    visited.clear();
 
     string line;
     getline(cin, line);
@@ -43,9 +51,11 @@ int main(void) {
       var_to_num[ch] = vars.size()-1;
     }
     
+    old_vars = vars;
     sort(vars.begin(), vars.end());
     graph.resize(vars.size());
     in_degree.resize(vars.size(), 0);
+
     
     getline(cin, line);
     ss.clear();
@@ -58,14 +68,46 @@ int main(void) {
       in_degree[second]++;
     }
 
-    //print_orders(-1);
-    
-
+    visited.resize(vars.size(), false);
+    order.resize(vars.size());
+    found = false;
+    print(0, in_degree);
+    if (!found)
+      cout << "NO" << endl;
+    if (num_cases)
+      cout << endl;
     cin >> ws;
   }
   return 0;
 }
 
-void print_orders(int position){
   
+void print(int position,
+	   vector<int> in_degree) {
+
+  if (position == vars.size()) {
+    found = true;
+    for (int cnt=0; cnt < vars.size()-1; cnt++)
+      cout << order[cnt] << " ";
+    cout << order.back() << endl;
+    return;
+  }
+  
+  vector<int> heads;
+  for (int index=0; index<vars.size(); index++) {
+  int node_num = var_to_num[vars[index]];
+  if (!in_degree[node_num] && !visited[node_num]) 
+    heads.push_back(node_num);
+  }
+  
+  for (auto head : heads) {
+      order[position] = old_vars[head];
+      vector<int> in_degree2(in_degree);
+      for (auto neighbour : graph[head])
+	in_degree2[neighbour]--;
+      visited[head] = true;
+      print(position+1, in_degree2);
+      visited[head] = false;
+  }
+
 }
