@@ -94,6 +94,7 @@ void dfs_ap(int v) {
     else if (u != parent[v])
       dfs_low[v] = min(dfs_low[v], dfs_num[u]);
   }
-
-  num_comp.push_back(make_pair(v, components));
+  
+  if (v != root)
+    num_comp.push_back(make_pair(v, components));
 }
