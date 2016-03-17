@@ -10,7 +10,7 @@ using std::pair;
 using std::make_pair;
 using std::vector;
 
-#define iii pair<pair<int, int> , int>
+#define iii pair<int, pair<int, int> >
 
 int find_set(int);
 void union_set(int, int);
@@ -21,18 +21,14 @@ vector<int> ranks;
 int main(void){
   int num_nodes, num_edges;
   cin >> num_nodes >> num_edges;
-  while (num_nodes && num_edges) {
+  while (num_nodes || num_edges) {
     vector<iii> edges(num_edges);
     for (int i=0; i<num_edges; i++) {
       int weight, first, second;
-      cin >> weight >> first >> second;
-      edges[i] = make_pair(make_pair(first, second),
-			   weight);
+      cin >> first >> second >> weight;
+      edges[i] = make_pair(weight, make_pair(first, second));
     }
-    if (num_edges == num_nodes-1) {
-      cout << "forest" << endl;
-      continue;
-    }
+
     sort(edges.begin(), edges.end());
     vector<bool> in_tree(num_edges, false);
 
@@ -44,9 +40,9 @@ int main(void){
     int tree_edges = 0;
     for (int i=0; tree_edges<num_nodes && i<num_edges; i++) {
       int weight, first, second;
-      weight = edges[i].second;
-      first = edges[i].first.first;
-      second = edges[i].first.second;
+      weight = edges[i].first;
+      first = edges[i].second.first;
+      second = edges[i].second.second;
       if (find_set(first) != find_set(second)){
 	union_set(first, second);
 	tree_edges++;
@@ -57,11 +53,16 @@ int main(void){
     int k=0;
     for (int i=0; i<num_edges; i++)
       if (!in_tree[i])
-	out_weights.push_back(edges[i].second);
+	out_weights.push_back(edges[i].first);
     sort(out_weights.begin(), out_weights.end());
-    for (auto o : out_weights)
-      cout << o << " ";
+    if (out_weights.size() == 0)
+      cout << "forest";
+    for (int i=0, s=out_weights.size(); i<s; i++){
+      if (i) cout << " ";
+      cout << out_weights[i];
+    }
     cout << endl;
+
     cin >> num_nodes >> num_edges;
   }
 }
