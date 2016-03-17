@@ -46,7 +46,7 @@ int main(void){
     
     int num_states = 1;
     double road = 0, rail = 0;
-    for (int i=0, s=distances.size(); num_edges<(num_cities-1) && i<s; i++) {
+    for (int i=0, s=distances.size(); num_edges<num_cities && i<s; i++) {
       pair<double, pair<int, int> > d = distances[i];
       int first = d.second.first, second = d.second.second;
       if (find_set(first) != find_set(second)) {
