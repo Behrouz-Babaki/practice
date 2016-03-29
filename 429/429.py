@@ -60,13 +60,13 @@ with sys.stdin as f:
                 if diff(w1, w2):
                     add_edge(graph, words, w1, w2)
 
+        if case_cnt > 0:
+            print ()
         pair = f.readline().strip()
         while pair!='':
             [source, dest] = pair.split()
             s = get_id(words, source)
             d = get_id(words, dest)
-            if case_cnt > 0:
-                print ()
             print (source, dest, bfs(s, d, graph))
             pair = f.readline().strip()
         
